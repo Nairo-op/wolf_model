@@ -20,18 +20,6 @@ This model is built in Python using the **NEURON simulator** to study somatic ex
 
 ### 📊 Data & Documentation
 *   **[Data/](file:///home/amajnas/wolf_model/Data)** — Lookup tables and fitting code used to configure channel kinetics.
-*   **[channel_validity_analysis.md](file:///home/amajnas/wolf_model/channel_validity_analysis.md)** — Detailed comparison against ModelDB (ID 112834) and the original publication.
-
----
-
-> [!IMPORTANT]
-> ### 🔧 Biophysical Adjustments
->
-> This implementation resolves critical discrepancies present in the original ModelDB code release:
-> 
-> 1. **SK Channel Ca²⁺ Sensitivity:** Modified [skkca.mod](file:///home/amajnas/wolf_model/skkca.mod) dissociation constants ($K_1, K_4$) by a factor of 1000 to restore physiological sub-micromolar (nanomolar) sensitivity.
-> 2. **SK Conductance:** Restored somatic/dendritic $g_{\text{bar}}$ to $0.145 \text{ S/cm}^2$ to match the published paper's Table 2 exactly.
-> 3. **BK Kinetics:** Updated [bkkca.mod](file:///home/amajnas/wolf_model/bkkca.mod) to utilize the Moczydlowski & Latorre (1983) kinetic scheme.
 
 ---
 
