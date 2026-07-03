@@ -1,0 +1,144 @@
+AMPA.cpp: ../AMPA.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "AMPA.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./AMPA.o: AMPA.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaL12.cpp: ../CaL12.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaL12.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaL12.o: CaL12.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaL13.cpp: ../CaL13.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaL13.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaL13.o: CaL13.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaN.cpp: ../CaN.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaN.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaN.o: CaN.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaQ.cpp: ../CaQ.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaQ.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaQ.o: CaQ.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaR.cpp: ../CaR.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaR.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaR.o: CaR.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+CaT.cpp: ../CaT.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "CaT.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./CaT.o: CaT.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+GABA.cpp: ../GABA.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "GABA.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./GABA.o: GABA.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+KAf.cpp: ../KAf.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "KAf.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./KAf.o: KAf.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+KAs.cpp: ../KAs.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "KAs.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./KAs.o: KAs.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+Kir.cpp: ../Kir.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "Kir.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./Kir.o: Kir.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+Krp.cpp: ../Krp.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "Krp.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./Krp.o: Krp.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+NMDA.cpp: ../NMDA.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "NMDA.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./NMDA.o: NMDA.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+NaF.cpp: ../NaF.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "NaF.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./NaF.o: NaF.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+NaP.cpp: ../NaP.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "NaP.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./NaP.o: NaP.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+bkkca.cpp: ../bkkca.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "bkkca.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./bkkca.o: bkkca.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+cadyn.cpp: ../cadyn.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "cadyn.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./cadyn.o: cadyn.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+
+skkca.cpp: ../skkca.mod $(NOCMODL)
+	@printf " -> $(C_GREEN)NMODL$(C_RESET) $<\\n"
+	(cd "..";  MODLUNIT=$(NRNUNITS) $(NOCMODL) "skkca.mod"  -o "/home/amajnas/wolf_model/x86_64" )
+
+./skkca.o: skkca.cpp
+	@printf " -> $(C_GREEN)Compiling$(C_RESET) /home/amajnas/wolf_model/x86_64/$<\\n"
+	$(CXXCOMPILE) -I".." $(INCLUDES) -fPIC -c "/home/amajnas/wolf_model/x86_64/$<" -o $@
+

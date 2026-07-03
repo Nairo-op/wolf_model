@@ -1,0 +1,182 @@
+from neuron import h
+import matplotlib.pyplot as plt
+import math
+
+h.load_file('stdrun.hoc')
+
+
+# Soma
+s_diam = 16 
+s_l = 16 
+s_nseg = 1
+s_cm = 1 
+s_ra = 100 
+
+# Primary dendrite (Spine Factor F = 1.0)
+pdend_nseg = 1
+pdend_diam = 2.25
+pdend_l = 20 
+pdend_F = 1.0
+
+# Secondary Dendrite (Spine Factor F = 1.33)
+sdend_F = 1.33
+
+sdend_nseg = 1
+true_sdend_diam = 1.0   # True diameter
+true_sdend_l = 20.0     # True length
+
+sdend_diam = 1.1
+sdend_l = 24.23
+
+# Tertiary dendrite (Spine Factor F = 3.0)
+tdend_F = 3.0
+
+tdend_nseg = 11
+true_tdend_diam = 0.5   # True diameter
+true_tdend_l = 190.0    # True length
+
+tdend_diam = 0.72
+tdend_l = 395.2
+
+e_pas = -70.0
+e_na = 50.0
+e_k = -90
+e_ca = 120
+
+
+
+soma_mechanisms = {
+    'pas': {'g_pas': 11.5e-6},'naf': {'gbar_naf': 1.5},'nap': {'gbar_nap': 4.0e-5},
+    'kaf': {'gbar_kaf': 0.225},   'kas': {'gbar_kas': 0.0104},
+    'kir': {'gbar_kir': 1.4e-4},'krp': {'gbar_krp': 0.001},
+    'cal12': {'pbar_cal12': 6.7e-6},'cal13': {'pbar_cal13': 4.25e-7},
+    'can': {'pbar_can': 1.0e-5},'car': {'pbar_car': 2.6e-5},'caq': {'pbar_caq': 6.0e-6},
+    'cat': {'pbar_cat': 4.0e-7},
+    'bkkca': {'gkbar_bkkca': 0.001},
+    'skkca': {'gkbar_skkca': 0.175}
+}
+
+pdend_mechanisms = {
+    'pas': {'g_pas': 11.5e-6}, 'naf': {'gbar_naf': 0.0195}, 'nap': {'gbar_nap': 1.38e-7},
+    'kaf': {'gbar_kaf': 0.225}, 'kas': {'gbar_kas': 0.0104}, 'kir': {'gbar_kir': 1.4e-4},
+    'bkkca': {'gkbar_bkkca': 0.001}, 
+    'skkca': {'gkbar_skkca': 0.175},
+    'cal12': {'pbar_cal12': 6.7e-6}, 'cal13': {'pbar_cal13': 4.25e-7},
+    'can': {'pbar_can': 1.0e-5}, 'car': {'pbar_car': 2.6e-5},
+    'caq': {'pbar_caq': 6.0e-6}, 'cat': {'pbar_cat': 4.0e-7},
+    'cadyn': {}  
+}
+
+
+sdend_mechanisms = {
+    'pas': {'g_pas': 11.5e-6 }, 
+    'naf': {'gbar_naf': 0.0195 }, 
+    'nap': {'gbar_nap': 1.38e-7 },
+    'kir': {'gbar_kir': 1.4e-4 },
+    'kaf': {'gbar_kaf': 0.021 }, 
+    'kas': {'gbar_kas': 9.51e-4 }, 
+    'bkkca': {'gkbar_bkkca': 0.001},
+    'skkca': {'gkbar_skkca': 0.175},
+    'cal12': {'pbar_cal12': 6.7e-6 }, 'cal13': {'pbar_cal13': 4.25e-7 },
+    'can': {'pbar_can': 1.0e-5 }, 'car': {'pbar_car': 2.6e-5 },
+    'caq': {'pbar_caq': 6.0e-6 }, 'cat': {'pbar_cat': 4.0e-7 },
+    'cadyn': {}  
+}
+
+tdend_mechanisms = {
+    'pas': {'g_pas': 11.5e-6 }, 
+    'naf': {'gbar_naf': 0.0195 }, 
+    'nap': {'gbar_nap': 1.38e-7 },
+    'kir': {'gbar_kir': 1.4e-4 },
+    'kaf': {'gbar_kaf': 0.021 }, 
+    'kas': {'gbar_kas': 9.51e-4 }, 
+    'bkkca': {'gkbar_bkkca': 0.001}, 
+    'skkca': {'gkbar_skkca': 0.175},
+    'cal12': {'pbar_cal12': 6.7e-6 }, 'cal13': {'pbar_cal13': 4.25e-7 },
+    'can': {'pbar_can': 1.0e-5 }, 'car': {'pbar_car': 2.6e-5 },
+    'caq': {'pbar_caq': 6.0e-6 }, 'cat': {'pbar_cat': 4.0e-7 },
+    'cadyn': {}  
+}
+
+def insert_mechanisms(sec, mech_dict):
+    sec.Ra = 100       
+    sec.cm = 1.0   
+    for mechanism, parameters in mech_dict.items():
+        sec.insert(mechanism)
+        for param_name, param_value in parameters.items():
+            setattr(sec, param_name, param_value)
+    
+    sec.e_pas = e_pas
+    sec.ena = e_na
+    sec.ek = e_k
+    sec.eca = e_ca
+    sec.ecl = e_ca
+    return sec
+
+def create_soma():
+    soma = h.Section(name='soma')
+    soma.nseg = int(s_nseg)
+    soma.diam = s_diam
+    soma.L = s_l
+    return insert_mechanisms(soma, soma_mechanisms)
+
+def create_dendrite(name_str, nseg, diam, l, mech_dict):
+    dend = h.Section(name=name_str)
+    dend.nseg = int(nseg)
+    dend.diam = diam
+    dend.L = l
+    return insert_mechanisms(dend, mech_dict)
+
+def create_all_dendrite_br2(soma_ref):
+    pdend, sdend, tdend = [], [], []
+
+    # Primary
+    for i in range(4):
+        pdend.append(create_dendrite(f'prim_{i}', pdend_nseg, pdend_diam, pdend_l, pdend_mechanisms ))        
+        pdend[i].connect(soma_ref(1), 0)  # Connect directly to center
+   
+    # Secondary
+    for i in range(8):
+        sdend.append(create_dendrite(f'sec_{i}', sdend_nseg, sdend_diam, sdend_l, sdend_mechanisms,))
+        pdend_index = math.floor(i // 2) 
+        sdend[i].connect(pdend[pdend_index](1), 0)
+    
+    # Tertiary
+    for i in range(16):
+        tdend.append(create_dendrite(f'tert_{i}', tdend_nseg, tdend_diam, tdend_l, tdend_mechanisms))
+        sdend_index = math.floor(i // 2)
+        tdend[i].connect(sdend[sdend_index](1), 0)
+
+    return pdend, sdend, tdend
+
+# Initialize cell
+soma = create_soma()
+prim_dend, sec_dend, tert_dend = create_all_dendrite_br2(soma)
+
+stim = h.IClamp(soma(0))
+stim.delay = 100   # ms
+stim.dur = 500 # ms
+stim.amp = 0.248 # nA
+
+
+# Setup Recording
+v_vec = h.Vector().record(soma(0.5)._ref_v)
+t_vec = h.Vector().record(h._ref_t)
+
+
+
+# State Initialization 
+h.finitialize(-87.75)   
+h.tstop = 700
+h.continuerun(700)
+
+# Plotting
+plt.figure(figsize=(10, 5))
+plt.plot(t_vec, v_vec, color='black', linewidth=1.5, label='Full Cell Membrane Potential')
+plt.xlabel('Time (ms)')
+plt.ylabel('Voltage (mV)')
+plt.title(f'Nucleus Accumbens MSN - soma current clamp amp: {stim.amp} nA for {stim.dur} ms')
+plt.axvspan(stim.delay, stim.delay + stim.dur, color='red', alpha=0.05, label='Injection Window')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.show()
