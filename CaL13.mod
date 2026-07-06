@@ -40,7 +40,7 @@ STATE {
 
 BREAKPOINT {
     SOLVE states METHOD cnexp
-    icl = pbar * m *  m * h *  ghk(v, cli, clo)
+    icl = pbar * m * m * h * ghk(v, cli, clo)
 }
 
 INITIAL {
@@ -58,24 +58,26 @@ DERIVATIVE states {
 PROCEDURE rates(v (mV)) {
     LOCAL m_alpha, m_beta
     
-    m_alpha = 0.1194 * (v + 8.124)/ (exp((v + 8.124) / 9.005) - 1)
+    m_alpha = 0.1194 * (v + 8.124) / (exp((v + 8.124) / 9.005) - 1)
     m_beta = 2.97 * exp(v / 31.4)
 
-    mtau = 1/(m_alpha + m_beta)
-    minf = 1 / (1 + exp(- (v + 33.0) /6.7)) 
+    mtau = 1 / (m_alpha + m_beta)
+    minf = 1 / (1 + exp(- (v + 33.0) / 6.7)) 
 
     htau = 14.77
     hinf = 1 / (1 + exp((v + 13.4) / 11.9))
 }
-FUNCTION ghk(v(mV), ci(mM), co(mM) ) (millicoul/cm3) {
-    LOCAL v_nu, f
 
-    f = (1000) * R * (celsius + 273.15) / (2 * FARADAY) :RT/zF
+FUNCTION ghk(v(mV), cli(mM), clo(mM)) (millicoul/cm3) {
+    LOCAL w, e
 
-    if (fabs(v) < 1e-4) {
-        ghk = f * (ci - co)
+    w = v * (0.001) * 2 * FARADAY / (R * (celsius + 273.16))
+
+    if (fabs(w) > 1e-4) {
+        e = w / (exp(w) - 1)
     } else {
-        v_nu = v / f
-        ghk = v_nu * (ci - co * exp(-v_nu)) / (1 - exp(-v_nu))
+        e = 1 - w / 2
     }
+    
+    ghk = - (0.001) * 2 * FARADAY * (clo - cli * exp(w)) * e
 }

@@ -1,3 +1,4 @@
+
 : Calcium activated K channel.
 : From Moczydlowski and Latorre (1983) J. Gen. Physiol. 82
 : Model 3. (Scheme R1 page 523)
@@ -16,74 +17,64 @@ NEURON {
 	USEION ca READ cai
 	USEION k READ ek WRITE ik
 	RANGE gkbar, ik, qfact, abar, bbar, stau
-	GLOBAL oinf, tau
 }
 
 PARAMETER {
-	stau = 1
-	qfact = 1
-	celsius	(degC) : 35
-	v		(mV)
-	gkbar=0.001	(mho/cm2)	: Maximum Permeability
-	cai		(mM) 
-	ek		(mV)
-
-	d1 = .84	      :page 527 Table II channel A
-	d2 = 1.0			:our index 2 is the paper's subscript 4
-	k1 = .18	(mM)
-	k2 = .011	(mM)
-	abar = .48	(/ms)
-	bbar = .28	(/ms) :page 524. our bbar is the paper's alpha
+        gkbar	= 1.0e-3 (S/cm2)
+	celsius		 (degC)
+	ek (mV)
 }
 
 ASSIGNED {
-	ik		(mA/cm2)
-	oinf
-	tau		(ms)
+        v       (mV)
+        cai	(mM)
+	ik	(mA/cm2)
+	k1	(/ms)
+	k2	(/ms)
+	k3	(/ms)
+	k4	(/ms)
+	q10	(1)
+	g	(mho/cm2)
 }
 
-STATE {	o }		: fraction of open channels
+STATE { cst ost ist }
 
-BREAKPOINT {
-	SOLVE state METHOD cnexp
-	ik = gkbar * o * (v - ek)
-}
-
-DERIVATIVE state {
-	rate(v, cai)
-	o' = (oinf - o) / (tau/qfact)
+BREAKPOINT { 
+	SOLVE kin METHOD sparse
+	g = gkbar * ost
+	ik = gkbar * ost * ( v - ek) 
 }
 
 INITIAL {
-	rate(v, cai)
-	o = oinf
-:	VERBATIM
-:		printf("R = %f\n",R);
-:		printf("F = %f\n",FARADAY);
-:	ENDVERBATIM
+	SOLVE kin STEADYSTATE sparse
 }
 
-: From R1 page 523. beta in the paper is the rate from closed to open
-: and we call it alp here.
-
-
-FUNCTION alp(v (mV), ca (mM)) (1/ms) { :callable from hoc
-	alp = abar/(1 + exp1(k1,d1,v)/ca)
+KINETIC kin {
+	rates(v)
+	~cst<->ost  (k3,k4)
+	~ost<->ist  (k1,0.0)
+	~ist<->cst  (k2,0.0)
+	CONSERVE cst+ost+ist=1
 }
 
-FUNCTION bet(v (mV), ca (mM)) (1/ms) { :callable from hoc
-	bet = bbar/(1 + ca/exp1(k2,d2,v))
+PROCEDURE rates( v(mV)) {
+	 k1=alp( 0.1, v,  -10.0,   1.0 )
+	 k2=alp( 0.1, v, -120.0, -10.0 )
+	 k3=alpha( 0.001, 1.0, v, -20.0, 7.0 ) *1.0e8* ( cai*1.0(/mM) )^3
+	 k4=alp( 0.01, v, -44.0,  -5.0 )
 }
 
-FUNCTION exp1(k (mM), d, v (mV)) (mM) { :callable from hoc
-	exp1 = k * exp( - 2 * d * FARADAY * v / R / (273.15 + celsius))
+FUNCTION alpha( tmin(ms), tmax(ms), v(mV), vhalf(mV), k(mV) )(/ms){
+        alpha = 1.0 / ( tmin + 1.0 / ( 1.0 / (tmax-tmin) + exp((v-vhalf)/k)*1.0(/ms) ) )
 }
 
-PROCEDURE rate(v (mV), ca (mM)) { 
-	:callable from hoc
-	LOCAL a
-	a = alp(v,ca)
-	tau = stau / (a + bet(v, ca))
-	oinf = a * tau
+FUNCTION alp( tmin(ms), v(mV), vhalf(mV), k(mV) )(/ms){
+        alp = 1.0 / ( tmin + exp( -(v-vhalf) / k )*1.0(ms) )
 }
+
+
+
+
+
+
 

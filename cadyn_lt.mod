@@ -1,12 +1,12 @@
-TITLE Submembrane calcium dynamics for N, P/Q, R calcium pool for NAcb cell
+TITLE Submembrane calcium dynamics for L, T calcium pool for NAcb cell
 
 INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
 
 NEURON {
-	SUFFIX cadyn
-	USEION ca READ ica, cai WRITE cai
-	RANGE pump, cainf, taur, drive, F
+	SUFFIX cadyn_lt
+	USEION cl READ icl, cli WRITE cli
+	RANGE pump, clinf, taur, drive, F
 }
 
 
@@ -23,9 +23,9 @@ CONSTANT {
 }
 
 PARAMETER {
-    drive   = 1000  (1)
+    drive   = 10000  (1)
 	depth	= 0.1	(um)		: depth of shell
-	cainf	= 1e-5	(mM)		: gives eca = 108 mV
+	clinf	= 1e-5	(mM)		: gives eca = 108 mV
 	taur	= 43	(ms)		: 
 	kt	= 1e-4	(mM/ms)			: left over from Destexhe
 	kd	= 1e-4	(mM)
@@ -35,15 +35,15 @@ PARAMETER {
 }
 
 STATE {
-	cai		(mM) 
+	cli		(mM) 
 }
 
 INITIAL {
-	cai = cainf
+	cli = clinf
 }
 
 ASSIGNED {
-	ica		(mA/cm2)
+	icl 	(mA/cm2)
 	drive_channel	(mM/ms)
 	drive_pump	(mM/ms)
 }
@@ -53,18 +53,18 @@ BREAKPOINT {
 }
 
 DERIVATIVE state { 
-	drive_channel =  - drive * ica / (2 * FARADAY * depth * F)
+	drive_channel =  - drive * icl / (2 * FARADAY * depth * F)
 	    : this part converts the incoming calcium (from channels) into
 	    : a corresponding change in internal concentration
 
 	if (drive_channel <= 0.) { drive_channel = 0. }	: cannot pump inward
 
-	drive_pump = -kt * cai / (cai + kd )		: Michaelis-Menten
+	drive_pump = -kt * cli / (cli + kd )		: Michaelis-Menten
 	    : this accounts for calcium being pumped back out - M-M
 	    : represents mechanism that is rate-limited by low ion conc.
 	    : at one end and max pumping rate at high end
 	
-	cai' = ( drive_channel + pump*drive_pump + (cainf-cai)/taur )
+	cli' = ( drive_channel + pump*drive_pump + (clinf-cli)/taur )
 	    : (cainf-cai)/taur represents exponential decay towards cainf
 	    : at a time constant of taur from diffusive processe
 }
@@ -82,7 +82,7 @@ Differential equations.
 
    A Michaelis-Menten approximation is assumed, which reduces the complexity
    of the system to 2 parameters: 
-       kt = <tot enzyme concentration> * k3  -> TIME CONSTANT OF THE PUMP
+       kt = <tot enzyme concent	ration> * k3  -> TIME CONSTANT OF THE PUMP
 	kd = k2/k1 (dissociation constant)    -> EQUILIBRIUM CALCIUM VALUE
    The values of these parameters are chosen assuming a high affinity of 
    the pump to calcium and a low transport capacity (cfr. Blaustein, 

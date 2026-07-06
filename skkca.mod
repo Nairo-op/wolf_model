@@ -1,5 +1,6 @@
 TITLE Calcium activated K channel (Moczydlowski and Latorre 1983)
 
+
 UNITS {
     (molar) = (1/liter)
     (mV) =  (millivolt)
@@ -14,11 +15,12 @@ NEURON {
     USEION ca READ cai
     USEION k READ ek WRITE ik
     RANGE gkbar, ik, stau
-    GLOBAL oinf, tau
 }
+
 
 PARAMETER {
     stau = 1
+    qfact = 1  : 1 in the paper
     v       (mV)
     gkbar = 0.145    (mho/cm2)
     cai     (mM) 
@@ -28,10 +30,10 @@ PARAMETER {
     : Model parameters from Moczydlowski & Latorre (1983) / typical defaults
     d1 = 0.84         : Gating valence for activation
     d2 = 1.0          : Gating valence for deactivation
-    k1 = 0.48 (mM):0.48e-3 (mM) : Dissociation constant 1 : scaling up by 1000 to convert from uM to mM
-    k2 = 0.13e-3 (mM):0.13e-3 (mM) : Dissociation constant 2 : scaling up by 1000 to convert from uM to mM
-    abar = 0.28  (/ms): Max forward rate
-    bbar = 0.48  (/ms): Max backward rate
+    k1 = 0.18 (mM):0.48e-3 (mM) : Dissociation constant 1 
+    k2 = 0.011 (mM):0.13e-3 (mM) : Dissociation constant 2 
+    abar = 0.48  (/ms): Max forward rate
+    bbar = 0.28  (/ms): Max backward rate
 }
 
 ASSIGNED {
@@ -48,31 +50,31 @@ BREAKPOINT {
 }
 
 DERIVATIVE state {
-    rate(v, cai)
-    o' = (oinf - o)/(tau)
+    rate(v, cai, celsius)
+    o' = (oinf - o)/(tau/qfact)
 }
 
 INITIAL {
-    rate(v, cai)
+    rate(v, cai, celsius)
     o = oinf
 }
 
-PROCEDURE rate(v (mV), ca (mM)) {
+PROCEDURE rate(v (mV), ca (mM), celsius (degC)) {
     LOCAL a, b
-    a = alp(v, ca)
-    b = bet(v, ca)
+    a = alp(v, ca, celsius)
+    b = bet(v, ca, celsius)
     tau = stau / (a + b)
     oinf = a / (a + b)
 }
 
-FUNCTION alp(v (mV), c (mM)) (1/ms) { 
-    alp = c * abar / (c + exp1(k1, d1, v))
+FUNCTION alp(v (mV), c (mM), celsius (degC)) (1/ms) { 
+    alp = c * abar / (c + exp1(k1, d1, v, celsius))
 }
 
-FUNCTION bet(v (mV), c (mM)) (1/ms) { 
-    bet = bbar / (1 + c / exp1(k2, d2, v))
+FUNCTION bet(v (mV), c (mM), celsius (degC)) (1/ms) { 
+    bet = bbar / (1 + c / exp1(k2, d2, v, celsius))
 }
 
-FUNCTION exp1(k (mM), d, v (mV)) (mM) { 
-    exp1 = k * exp(-2 * d * FARADAY * v / (R * (273.15 + celsius)))
+FUNCTION exp1(k (mM), d, v (mV), celsius (degC)) (mM) { 
+    exp1 = k * exp(-2 * d * FARADAY * v  / (R * (273.15 + celsius)))
 }

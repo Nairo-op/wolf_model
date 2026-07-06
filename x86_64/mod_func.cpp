@@ -19,7 +19,8 @@ extern "C" void _NMDA_reg(void);
 extern "C" void _NaF_reg(void);
 extern "C" void _NaP_reg(void);
 extern "C" void _bkkca_reg(void);
-extern "C" void _cadyn_reg(void);
+extern "C" void _cadyn_lt_reg(void);
+extern "C" void _cadyn_nqr_reg(void);
 extern "C" void _skkca_reg(void);
 
 extern "C" void modl_reg() {
@@ -41,7 +42,8 @@ extern "C" void modl_reg() {
     fprintf(stderr, " \"NaF.mod\"");
     fprintf(stderr, " \"NaP.mod\"");
     fprintf(stderr, " \"bkkca.mod\"");
-    fprintf(stderr, " \"cadyn.mod\"");
+    fprintf(stderr, " \"cadyn_lt.mod\"");
+    fprintf(stderr, " \"cadyn_nqr.mod\"");
     fprintf(stderr, " \"skkca.mod\"");
     fprintf(stderr, "\n");
   }
@@ -61,6 +63,7 @@ extern "C" void modl_reg() {
   _NaF_reg();
   _NaP_reg();
   _bkkca_reg();
-  _cadyn_reg();
+  _cadyn_lt_reg();
+  _cadyn_nqr_reg();
   _skkca_reg();
 }

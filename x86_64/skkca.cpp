@@ -1,6 +1,6 @@
 /* Created by Language version: 7.7.0 */
-/* NOT VECTORIZED */
-#define NRN_VECTORIZED 0
+/* VECTORIZED */
+#define NRN_VECTORIZED 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -16,11 +16,8 @@
 #include "nrnconf.h"
 // clang-format on
 #include "neuron/cache/mechanism_range.hpp"
-#include <vector>
-using std::size_t;
-static auto& std_cerr_stream = std::cerr;
 static constexpr auto number_of_datum_variables = 5;
-static constexpr auto number_of_floating_point_variables = 8;
+static constexpr auto number_of_floating_point_variables = 11;
 namespace {
 template <typename T>
 using _nrn_mechanism_std_vector = std::vector<T>;
@@ -55,20 +52,20 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define rate rate__skkca 
 #define state state__skkca 
  
-#define _threadargscomma_ /**/
-#define _threadargsprotocomma_ /**/
-#define _internalthreadargsprotocomma_ /**/
-#define _threadargs_ /**/
-#define _threadargsproto_ /**/
-#define _internalthreadargsproto_ /**/
+#define _threadargscomma_ _ml, _iml, _ppvar, _thread, _globals, _nt,
+#define _threadargsprotocomma_ Memb_list* _ml, size_t _iml, Datum* _ppvar, Datum* _thread, double* _globals, NrnThread* _nt,
+#define _internalthreadargsprotocomma_ _nrn_mechanism_cache_range* _ml, size_t _iml, Datum* _ppvar, Datum* _thread, double* _globals, NrnThread* _nt,
+#define _threadargs_ _ml, _iml, _ppvar, _thread, _globals, _nt
+#define _threadargsproto_ Memb_list* _ml, size_t _iml, Datum* _ppvar, Datum* _thread, double* _globals, NrnThread* _nt
+#define _internalthreadargsproto_ _nrn_mechanism_cache_range* _ml, size_t _iml, Datum* _ppvar, Datum* _thread, double* _globals, NrnThread* _nt
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
 	/*SUPPRESS 763*/
 	/*SUPPRESS 765*/
 	 extern double *hoc_getarg(int);
  
-#define t nrn_threads->_t
-#define dt nrn_threads->_dt
+#define t _nt->_t
+#define dt _nt->_dt
 #define stau _ml->template fpfield<0>(_iml)
 #define stau_columnindex 0
 #define gkbar _ml->template fpfield<1>(_iml)
@@ -81,10 +78,16 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define cai_columnindex 4
 #define ek _ml->template fpfield<5>(_iml)
 #define ek_columnindex 5
-#define Do _ml->template fpfield<6>(_iml)
-#define Do_columnindex 6
-#define _g _ml->template fpfield<7>(_iml)
-#define _g_columnindex 7
+#define oinf _ml->template fpfield<6>(_iml)
+#define oinf_columnindex 6
+#define tau _ml->template fpfield<7>(_iml)
+#define tau_columnindex 7
+#define Do _ml->template fpfield<8>(_iml)
+#define Do_columnindex 8
+#define v _ml->template fpfield<9>(_iml)
+#define v_columnindex 9
+#define _g _ml->template fpfield<10>(_iml)
+#define _g_columnindex 10
 #define _ion_cai *(_ml->dptr_field<0>(_iml))
 #define _p_ion_cai static_cast<neuron::container::data_handle<double>>(_ppvar[0])
 #define _ion_cao *(_ml->dptr_field<1>(_iml))
@@ -94,11 +97,9 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define _ion_ik *(_ml->dptr_field<3>(_iml))
 #define _p_ion_ik static_cast<neuron::container::data_handle<double>>(_ppvar[3])
 #define _ion_dikdv *(_ml->dptr_field<4>(_iml))
- static _nrn_mechanism_cache_instance _ml_real{nullptr};
-static _nrn_mechanism_cache_range *_ml{&_ml_real};
-static size_t _iml{0};
-static Datum *_ppvar;
+ /* Thread safe. No static _ml, _iml or _ppvar. */
  static int hoc_nrnpointerindex =  -1;
+ static _nrn_mechanism_std_vector<Datum> _extcall_thread;
  static Prop* _extcall_prop;
  /* _prop_id kind of shadows _extcall_prop to allow validity checking. */
  static _nrn_non_owning_id_without_container _prop_id{};
@@ -146,28 +147,26 @@ static NPyDirectMechFunc npy_direct_func_proc[] = {
 #define alp alp_skkca
 #define bet bet_skkca
 #define exp1 exp1_skkca
- extern double alp( double , double );
- extern double bet( double , double );
- extern double exp1( double , double , double );
+ extern double alp( _internalthreadargsprotocomma_ double , double , double );
+ extern double bet( _internalthreadargsprotocomma_ double , double , double );
+ extern double exp1( _internalthreadargsprotocomma_ double , double , double , double );
  /* declare global and static user variables */
  #define gind 0
  #define _gth 0
 #define abar abar_skkca
- double abar = 0.28;
+ double abar = 0.48;
 #define bbar bbar_skkca
- double bbar = 0.48;
+ double bbar = 0.28;
 #define d2 d2_skkca
  double d2 = 1;
 #define d1 d1_skkca
  double d1 = 0.84;
 #define k2 k2_skkca
- double k2 = 0.00013;
+ double k2 = 0.011;
 #define k1 k1_skkca
- double k1 = 0.48;
-#define oinf oinf_skkca
- double oinf = 0;
-#define tau tau_skkca
- double tau = 0;
+ double k1 = 0.18;
+#define qfact qfact_skkca
+ double qfact = 1;
  /* some parameters have upper and lower limits */
  static HocParmLimits _hoc_parm_limits[] = {
  {0, 0, 0}
@@ -177,24 +176,21 @@ static NPyDirectMechFunc npy_direct_func_proc[] = {
  {"k2_skkca", "mM"},
  {"abar_skkca", "/ms"},
  {"bbar_skkca", "/ms"},
- {"tau_skkca", "ms"},
  {"gkbar_skkca", "mho/cm2"},
  {"ik_skkca", "mA/cm2"},
  {0, 0}
 };
  static double delta_t = 0.01;
  static double o0 = 0;
- static double v = 0;
  /* connect global user variables to hoc */
  static DoubScal hoc_scdoub[] = {
+ {"qfact_skkca", &qfact_skkca},
  {"d1_skkca", &d1_skkca},
  {"d2_skkca", &d2_skkca},
  {"k1_skkca", &k1_skkca},
  {"k2_skkca", &k2_skkca},
  {"abar_skkca", &abar_skkca},
  {"bbar_skkca", &bbar_skkca},
- {"oinf_skkca", &oinf_skkca},
- {"tau_skkca", &tau_skkca},
  {0, 0}
 };
  static DoubVec hoc_vdoub[] = {
@@ -205,10 +201,6 @@ static NPyDirectMechFunc npy_direct_func_proc[] = {
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
  _prop_id = _nrn_get_prop_id(_prop);
- neuron::legacy::set_globals_from_prop(_prop, _ml_real, _ml, _iml);
-_ppvar = _nrn_mechanism_access_dparam(_prop);
- Node * _node = _nrn_mechanism_access_node(_prop);
-v = _nrn_mechanism_access_voltage(_node);
  }
  static void _hoc_setdata() {
  Prop *_prop, *hoc_getdata_range(int);
@@ -260,11 +252,11 @@ static void nrn_alloc(Prop* _prop) {
      _nrn_mechanism_cache_instance _ml_real{_prop};
     auto* const _ml = &_ml_real;
     size_t const _iml{};
-    assert(_nrn_mechanism_get_num_vars(_prop) == 8);
+    assert(_nrn_mechanism_get_num_vars(_prop) == 11);
  	/*initialize range parameters*/
  	stau = _parm_default[0]; /* 1 */
  	gkbar = _parm_default[1]; /* 0.145 */
- 	 assert(_nrn_mechanism_get_num_vars(_prop) == 8);
+ 	 assert(_nrn_mechanism_get_num_vars(_prop) == 11);
  	_nrn_mechanism_access_dparam(_prop) = _ppvar;
  	/*connect ionic variables to this model*/
  prop_ion = need_memb(_ca_sym);
@@ -291,13 +283,13 @@ extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
 extern void _cvode_abstol( Symbol**, double*, int);
 
  extern "C" void _skkca_reg() {
-	int _vectorized = 0;
+	int _vectorized = 1;
   _initlists();
  	ion_reg("ca", -10000.);
  	ion_reg("k", -10000.);
  	_ca_sym = hoc_lookup("ca_ion");
  	_k_sym = hoc_lookup("k_ion");
- 	register_mech(_mechanism, nrn_alloc,nrn_cur, nrn_jacob, nrn_state, nrn_init, hoc_nrnpointerindex, 0);
+ 	register_mech(_mechanism, nrn_alloc,nrn_cur, nrn_jacob, nrn_state, nrn_init, hoc_nrnpointerindex, 1);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
  hoc_register_parm_default(_mechtype, &_parm_default);
          hoc_register_npy_direct(_mechtype, npy_direct_func_proc);
@@ -312,15 +304,18 @@ extern void _cvode_abstol( Symbol**, double*, int);
                                        _nrn_mechanism_field<double>{"o"} /* 3 */,
                                        _nrn_mechanism_field<double>{"cai"} /* 4 */,
                                        _nrn_mechanism_field<double>{"ek"} /* 5 */,
-                                       _nrn_mechanism_field<double>{"Do"} /* 6 */,
-                                       _nrn_mechanism_field<double>{"_g"} /* 7 */,
+                                       _nrn_mechanism_field<double>{"oinf"} /* 6 */,
+                                       _nrn_mechanism_field<double>{"tau"} /* 7 */,
+                                       _nrn_mechanism_field<double>{"Do"} /* 8 */,
+                                       _nrn_mechanism_field<double>{"v"} /* 9 */,
+                                       _nrn_mechanism_field<double>{"_g"} /* 10 */,
                                        _nrn_mechanism_field<double*>{"_ion_cai", "ca_ion"} /* 0 */,
                                        _nrn_mechanism_field<double*>{"_ion_cao", "ca_ion"} /* 1 */,
                                        _nrn_mechanism_field<double*>{"_ion_ek", "k_ion"} /* 2 */,
                                        _nrn_mechanism_field<double*>{"_ion_ik", "k_ion"} /* 3 */,
                                        _nrn_mechanism_field<double*>{"_ion_dikdv", "k_ion"} /* 4 */,
                                        _nrn_mechanism_field<int>{"_cvode_ieq", "cvodeieq"} /* 5 */);
-  hoc_register_prop_size(_mechtype, 8, 6);
+  hoc_register_prop_size(_mechtype, 11, 6);
   hoc_register_dparam_semantics(_mechtype, 0, "ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "ca_ion");
   hoc_register_dparam_semantics(_mechtype, 2, "k_ion");
@@ -344,7 +339,7 @@ static int error;
 static int _ninits = 0;
 static int _match_recurse=1;
 static void _modl_cleanup(){ _match_recurse=1;}
-static int rate(double, double);
+static int rate(_internalthreadargsprotocomma_ double, double, double);
  
 static int _ode_spec1(_internalthreadargsproto_);
 /*static int _ode_matsol1(_internalthreadargsproto_);*/
@@ -352,124 +347,192 @@ static int _ode_spec1(_internalthreadargsproto_);
  static int state(_internalthreadargsproto_);
  
 /*CVODE*/
- static int _ode_spec1 () {_reset=0;
- {
-   rate ( _threadargscomma_ v , cai ) ;
-   Do = ( oinf - o ) / ( tau ) ;
+ static int _ode_spec1 (_internalthreadargsproto_) {int _reset = 0; {
+   rate ( _threadargscomma_ v , cai , celsius ) ;
+   Do = ( oinf - o ) / ( tau / qfact ) ;
    }
  return _reset;
 }
- static int _ode_matsol1 () {
- rate ( _threadargscomma_ v , cai ) ;
- Do = Do  / (1. - dt*( ( ( ( - 1.0 ) ) ) / ( tau ) )) ;
+ static int _ode_matsol1 (_internalthreadargsproto_) {
+ rate ( _threadargscomma_ v , cai , celsius ) ;
+ Do = Do  / (1. - dt*( ( ( ( - 1.0 ) ) ) / ( tau / qfact ) )) ;
   return 0;
 }
  /*END CVODE*/
- static int state () {_reset=0;
- {
-   rate ( _threadargscomma_ v , cai ) ;
-    o = o + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ( tau ))))*(- ( ( ( oinf ) ) / ( tau ) ) / ( ( ( ( - 1.0 ) ) ) / ( tau ) ) - o) ;
+ static int state (_internalthreadargsproto_) { {
+   rate ( _threadargscomma_ v , cai , celsius ) ;
+    o = o + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ( tau / qfact ))))*(- ( ( ( oinf ) ) / ( tau / qfact ) ) / ( ( ( ( - 1.0 ) ) ) / ( tau / qfact ) ) - o) ;
    }
   return 0;
 }
  
-static int  rate (  double _lv , double _lca ) {
+static int  rate ( _internalthreadargsprotocomma_ double _lv , double _lca , double _lcelsius ) {
    double _la , _lb ;
- _la = alp ( _threadargscomma_ _lv , _lca ) ;
-   _lb = bet ( _threadargscomma_ _lv , _lca ) ;
+ _la = alp ( _threadargscomma_ _lv , _lca , _lcelsius ) ;
+   _lb = bet ( _threadargscomma_ _lv , _lca , _lcelsius ) ;
    tau = stau / ( _la + _lb ) ;
    oinf = _la / ( _la + _lb ) ;
     return 0; }
  
 static void _hoc_rate(void) {
   double _r;
-  
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ 
   if(!_prop_id) {
     hoc_execerror("No data for rate_skkca. Requires prior call to setdata_skkca and that the specified mechanism instance still be in existence.", NULL);
-  } else {
-    _setdata(_extcall_prop);
   }
-   _r = 1.;
- rate (  *getarg(1) , *getarg(2) );
+  Prop* _local_prop = _extcall_prop;
+  _nrn_mechanism_cache_instance _ml_real{_local_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _local_prop ? _nrn_mechanism_access_dparam(_local_prop) : nullptr;
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r = 1.;
+ rate ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  hoc_retpushx(_r);
 }
  
 static double _npy_rate(Prop* _prop) {
     double _r{0.0};
-    neuron::legacy::set_globals_from_prop(_prop, _ml_real, _ml, _iml);
-  _ppvar = _nrn_mechanism_access_dparam(_prop);
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ _nrn_mechanism_cache_instance _ml_real{_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _nrn_mechanism_access_dparam(_prop);
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
  _r = 1.;
- rate (  *getarg(1) , *getarg(2) );
+ rate ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  return(_r);
 }
  
-double alp (  double _lv , double _lc ) {
+double alp ( _internalthreadargsprotocomma_ double _lv , double _lc , double _lcelsius ) {
    double _lalp;
- _lalp = _lc * abar / ( _lc + exp1 ( _threadargscomma_ k1 , d1 , _lv ) ) ;
+ _lalp = _lc * abar / ( _lc + exp1 ( _threadargscomma_ k1 , d1 , _lv , _lcelsius ) ) ;
    
 return _lalp;
  }
  
 static void _hoc_alp(void) {
   double _r;
-    _r =  alp (  *getarg(1) , *getarg(2) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ 
+  Prop* _local_prop = _prop_id ? _extcall_prop : nullptr;
+  _nrn_mechanism_cache_instance _ml_real{_local_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _local_prop ? _nrn_mechanism_access_dparam(_local_prop) : nullptr;
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  alp ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  hoc_retpushx(_r);
 }
  
 static double _npy_alp(Prop* _prop) {
     double _r{0.0};
-    neuron::legacy::set_globals_from_prop(_prop, _ml_real, _ml, _iml);
-  _ppvar = _nrn_mechanism_access_dparam(_prop);
- _r =  alp (  *getarg(1) , *getarg(2) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ _nrn_mechanism_cache_instance _ml_real{_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _nrn_mechanism_access_dparam(_prop);
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  alp ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  return(_r);
 }
  
-double bet (  double _lv , double _lc ) {
+double bet ( _internalthreadargsprotocomma_ double _lv , double _lc , double _lcelsius ) {
    double _lbet;
- _lbet = bbar / ( 1.0 + _lc / exp1 ( _threadargscomma_ k2 , d2 , _lv ) ) ;
+ _lbet = bbar / ( 1.0 + _lc / exp1 ( _threadargscomma_ k2 , d2 , _lv , _lcelsius ) ) ;
    
 return _lbet;
  }
  
 static void _hoc_bet(void) {
   double _r;
-    _r =  bet (  *getarg(1) , *getarg(2) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ 
+  Prop* _local_prop = _prop_id ? _extcall_prop : nullptr;
+  _nrn_mechanism_cache_instance _ml_real{_local_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _local_prop ? _nrn_mechanism_access_dparam(_local_prop) : nullptr;
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  bet ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  hoc_retpushx(_r);
 }
  
 static double _npy_bet(Prop* _prop) {
     double _r{0.0};
-    neuron::legacy::set_globals_from_prop(_prop, _ml_real, _ml, _iml);
-  _ppvar = _nrn_mechanism_access_dparam(_prop);
- _r =  bet (  *getarg(1) , *getarg(2) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ _nrn_mechanism_cache_instance _ml_real{_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _nrn_mechanism_access_dparam(_prop);
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  bet ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) );
  return(_r);
 }
  
-double exp1 (  double _lk , double _ld , double _lv ) {
+double exp1 ( _internalthreadargsprotocomma_ double _lk , double _ld , double _lv , double _lcelsius ) {
    double _lexp1;
- _lexp1 = _lk * exp ( - 2.0 * _ld * FARADAY * _lv / ( R * ( 273.15 + celsius ) ) ) ;
+ _lexp1 = _lk * exp ( - 2.0 * _ld * FARADAY * _lv / ( R * ( 273.15 + _lcelsius ) ) ) ;
    
 return _lexp1;
  }
  
 static void _hoc_exp1(void) {
   double _r;
-    _r =  exp1 (  *getarg(1) , *getarg(2) , *getarg(3) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ 
+  Prop* _local_prop = _prop_id ? _extcall_prop : nullptr;
+  _nrn_mechanism_cache_instance _ml_real{_local_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _local_prop ? _nrn_mechanism_access_dparam(_local_prop) : nullptr;
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  exp1 ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) , *getarg(4) );
  hoc_retpushx(_r);
 }
  
 static double _npy_exp1(Prop* _prop) {
     double _r{0.0};
-    neuron::legacy::set_globals_from_prop(_prop, _ml_real, _ml, _iml);
-  _ppvar = _nrn_mechanism_access_dparam(_prop);
- _r =  exp1 (  *getarg(1) , *getarg(2) , *getarg(3) );
+ Datum* _ppvar; Datum* _thread; NrnThread* _nt;
+ _nrn_mechanism_cache_instance _ml_real{_prop};
+auto* const _ml = &_ml_real;
+size_t const _iml{};
+_ppvar = _nrn_mechanism_access_dparam(_prop);
+_thread = _extcall_thread.data();
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+_nt = nrn_threads;
+ _r =  exp1 ( _threadargscomma_ *getarg(1) , *getarg(2) , *getarg(3) , *getarg(4) );
  return(_r);
 }
  
 static int _ode_count(int _type){ return 1;}
  
 static void _ode_spec(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type) {
-      Node* _nd{};
+   Datum* _ppvar;
+   size_t _iml;   _nrn_mechanism_cache_range* _ml;   Node* _nd{};
   double _v{};
   int _cntml;
   _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
@@ -484,10 +547,11 @@ static void _ode_spec(_nrn_model_sorted_token const& _sorted_token, NrnThread* _
     v = NODEV(_nd);
   cai = _ion_cai;
   ek = _ion_ek;
-     _ode_spec1 ();
+     _ode_spec1 (_threadargs_);
   }}
  
 static void _ode_map(Prop* _prop, int _ieq, neuron::container::data_handle<double>* _pv, neuron::container::data_handle<double>* _pvdot, double* _atol, int _type) { 
+  Datum* _ppvar;
   _ppvar = _nrn_mechanism_access_dparam(_prop);
   _cvode_ieq = _ieq;
   for (int _i=0; _i < 1; ++_i) {
@@ -498,11 +562,12 @@ static void _ode_map(Prop* _prop, int _ieq, neuron::container::data_handle<doubl
  }
  
 static void _ode_matsol_instance1(_internalthreadargsproto_) {
- _ode_matsol1 ();
+ _ode_matsol1 (_threadargs_);
  }
  
 static void _ode_matsol(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type) {
-      Node* _nd{};
+   Datum* _ppvar;
+   size_t _iml;   _nrn_mechanism_cache_range* _ml;   Node* _nd{};
   double _v{};
   int _cntml;
   _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
@@ -520,38 +585,41 @@ static void _ode_matsol(_nrn_model_sorted_token const& _sorted_token, NrnThread*
  _ode_matsol_instance1(_threadargs_);
  }}
 
-static void initmodel() {
-  int _i; double _save;_ninits++;
- _save = t;
- t = 0.0;
-{
+static void initmodel(_internalthreadargsproto_) {
+  int _i; double _save;{
   o = o0;
  {
-   rate ( _threadargscomma_ v , cai ) ;
+   rate ( _threadargscomma_ v , cai , celsius ) ;
    o = oinf ;
    }
-  _sav_indep = t; t = _save;
-
+ 
 }
 }
 
 static void nrn_init(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type){
-Node *_nd; double _v; int* _ni; int _cntml;
 _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
 auto* const _vec_v = _nt->node_voltage_storage();
-_ml = &_lmr;
+auto* const _ml = &_lmr;
+Datum* _ppvar; Datum* _thread;
+Node *_nd; double _v; int* _ni; int _iml, _cntml;
 _ni = _ml_arg->_nodeindices;
 _cntml = _ml_arg->_nodecount;
+_thread = _ml_arg->_thread;
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _ppvar = _ml_arg->_pdata[_iml];
    _v = _vec_v[_ni[_iml]];
  v = _v;
   cai = _ion_cai;
   ek = _ion_ek;
- initmodel();
- }}
+ initmodel(_threadargs_);
+ }
+}
 
-static double _nrn_current(double _v){double _current=0.;v=_v;{ {
+static double _nrn_current(_internalthreadargsprotocomma_ double _v) {
+double _current=0.; v=_v;
+{ {
    ik = gkbar * o * ( v - ek ) ;
    }
  _current += ik;
@@ -559,53 +627,69 @@ static double _nrn_current(double _v){double _current=0.;v=_v;{ {
 } return _current;
 }
 
-static void nrn_cur(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type){
+static void nrn_cur(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type) {
 _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
 auto const _vec_rhs = _nt->node_rhs_storage();
 auto const _vec_sav_rhs = _nt->node_sav_rhs_storage();
 auto const _vec_v = _nt->node_voltage_storage();
-Node *_nd; int* _ni; double _rhs, _v; int _cntml;
-_ml = &_lmr;
+auto* const _ml = &_lmr;
+Datum* _ppvar; Datum* _thread;
+Node *_nd; int* _ni; double _rhs, _v; int _iml, _cntml;
 _ni = _ml_arg->_nodeindices;
 _cntml = _ml_arg->_nodecount;
+_thread = _ml_arg->_thread;
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _ppvar = _ml_arg->_pdata[_iml];
    _v = _vec_v[_ni[_iml]];
   cai = _ion_cai;
   ek = _ion_ek;
- auto const _g_local = _nrn_current(_v + .001);
+ auto const _g_local = _nrn_current(_threadargscomma_ _v + .001);
  	{ double _dik;
   _dik = ik;
- _rhs = _nrn_current(_v);
+ _rhs = _nrn_current(_threadargscomma_ _v);
   _ion_dikdv += (_dik - ik)/.001 ;
  	}
  _g = (_g_local - _rhs)/.001;
   _ion_ik += ik ;
 	 _vec_rhs[_ni[_iml]] -= _rhs;
  
-}}
+}
+ 
+}
 
 static void nrn_jacob(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type) {
 _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
 auto const _vec_d = _nt->node_d_storage();
 auto const _vec_sav_d = _nt->node_sav_d_storage();
 auto* const _ml = &_lmr;
+Datum* _ppvar; Datum* _thread;
 Node *_nd; int* _ni; int _iml, _cntml;
 _ni = _ml_arg->_nodeindices;
 _cntml = _ml_arg->_nodecount;
+_thread = _ml_arg->_thread;
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
 for (_iml = 0; _iml < _cntml; ++_iml) {
   _vec_d[_ni[_iml]] += _g;
  
-}}
+}
+ 
+}
 
-static void nrn_state(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type){
-Node *_nd; double _v = 0.0; int* _ni; int _cntml;
+static void nrn_state(_nrn_model_sorted_token const& _sorted_token, NrnThread* _nt, Memb_list* _ml_arg, int _type) {
 _nrn_mechanism_cache_range _lmr{_sorted_token, *_nt, *_ml_arg, _type};
 auto* const _vec_v = _nt->node_voltage_storage();
-_ml = &_lmr;
+auto* const _ml = &_lmr;
+Datum* _ppvar; Datum* _thread;
+Node *_nd; double _v = 0.0; int* _ni;
 _ni = _ml_arg->_nodeindices;
-_cntml = _ml_arg->_nodecount;
-for (_iml = 0; _iml < _cntml; ++_iml) {
+size_t _cntml = _ml_arg->_nodecount;
+_thread = _ml_arg->_thread;
+double* _globals = nullptr;
+if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); }
+for (size_t _iml = 0; _iml < _cntml; ++_iml) {
  _ppvar = _ml_arg->_pdata[_iml];
  _nd = _ml_arg->_nodelist[_iml];
    _v = _vec_v[_ni[_iml]];
@@ -613,19 +697,14 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 {
   cai = _ion_cai;
   ek = _ion_ek;
- { error =  state();
- if(error){
-  std_cerr_stream << "at line 45 in file skkca.mod:\nBREAKPOINT {\n";
-  std_cerr_stream << _ml << ' ' << _iml << '\n';
-  abort_run(error);
-}
- } }}
+ {   state(_threadargs_);
+  } }}
 
 }
 
 static void terminal(){}
 
-static void _initlists() {
+static void _initlists(){
  int _i; static int _first = 1;
   if (!_first) return;
  _slist1[0] = {o_columnindex, 0};  _dlist1[0] = {Do_columnindex, 0};
@@ -637,6 +716,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
     const char* nmodl_filename = "/home/amajnas/wolf_model/skkca.mod";
     const char* nmodl_file_text = 
   "TITLE Calcium activated K channel (Moczydlowski and Latorre 1983)\n"
+  "\n"
   "\n"
   "UNITS {\n"
   "    (molar) = (1/liter)\n"
@@ -652,11 +732,12 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    USEION ca READ cai\n"
   "    USEION k READ ek WRITE ik\n"
   "    RANGE gkbar, ik, stau\n"
-  "    GLOBAL oinf, tau\n"
   "}\n"
+  "\n"
   "\n"
   "PARAMETER {\n"
   "    stau = 1\n"
+  "    qfact = 1  : 1 in the paper\n"
   "    v       (mV)\n"
   "    gkbar = 0.145    (mho/cm2)\n"
   "    cai     (mM) \n"
@@ -666,10 +747,10 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    : Model parameters from Moczydlowski & Latorre (1983) / typical defaults\n"
   "    d1 = 0.84         : Gating valence for activation\n"
   "    d2 = 1.0          : Gating valence for deactivation\n"
-  "    k1 = 0.48 (mM):0.48e-3 (mM) : Dissociation constant 1 : scaling up by 1000 to convert from uM to mM\n"
-  "    k2 = 0.13e-3 (mM):0.13e-3 (mM) : Dissociation constant 2 : scaling up by 1000 to convert from uM to mM\n"
-  "    abar = 0.28  (/ms): Max forward rate\n"
-  "    bbar = 0.48  (/ms): Max backward rate\n"
+  "    k1 = 0.18 (mM):0.48e-3 (mM) : Dissociation constant 1 \n"
+  "    k2 = 0.011 (mM):0.13e-3 (mM) : Dissociation constant 2 \n"
+  "    abar = 0.48  (/ms): Max forward rate\n"
+  "    bbar = 0.28  (/ms): Max backward rate\n"
   "}\n"
   "\n"
   "ASSIGNED {\n"
@@ -686,33 +767,33 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "}\n"
   "\n"
   "DERIVATIVE state {\n"
-  "    rate(v, cai)\n"
-  "    o' = (oinf - o)/(tau)\n"
+  "    rate(v, cai, celsius)\n"
+  "    o' = (oinf - o)/(tau/qfact)\n"
   "}\n"
   "\n"
   "INITIAL {\n"
-  "    rate(v, cai)\n"
+  "    rate(v, cai, celsius)\n"
   "    o = oinf\n"
   "}\n"
   "\n"
-  "PROCEDURE rate(v (mV), ca (mM)) {\n"
+  "PROCEDURE rate(v (mV), ca (mM), celsius (degC)) {\n"
   "    LOCAL a, b\n"
-  "    a = alp(v, ca)\n"
-  "    b = bet(v, ca)\n"
+  "    a = alp(v, ca, celsius)\n"
+  "    b = bet(v, ca, celsius)\n"
   "    tau = stau / (a + b)\n"
   "    oinf = a / (a + b)\n"
   "}\n"
   "\n"
-  "FUNCTION alp(v (mV), c (mM)) (1/ms) { \n"
-  "    alp = c * abar / (c + exp1(k1, d1, v))\n"
+  "FUNCTION alp(v (mV), c (mM), celsius (degC)) (1/ms) { \n"
+  "    alp = c * abar / (c + exp1(k1, d1, v, celsius))\n"
   "}\n"
   "\n"
-  "FUNCTION bet(v (mV), c (mM)) (1/ms) { \n"
-  "    bet = bbar / (1 + c / exp1(k2, d2, v))\n"
+  "FUNCTION bet(v (mV), c (mM), celsius (degC)) (1/ms) { \n"
+  "    bet = bbar / (1 + c / exp1(k2, d2, v, celsius))\n"
   "}\n"
   "\n"
-  "FUNCTION exp1(k (mM), d, v (mV)) (mM) { \n"
-  "    exp1 = k * exp(-2 * d * FARADAY * v / (R * (273.15 + celsius)))\n"
+  "FUNCTION exp1(k (mM), d, v (mV), celsius (degC)) (mM) { \n"
+  "    exp1 = k * exp(-2 * d * FARADAY * v  / (R * (273.15 + celsius)))\n"
   "}\n"
   ;
     hoc_reg_nmodl_filename(mech_type, nmodl_filename);

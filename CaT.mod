@@ -141,15 +141,15 @@ PROCEDURE rates(v (mV)) {
     }
 }
 
-FUNCTION ghk(v(mV), ci(mM), co(mM) ) (millicoul/cm3) {
+FUNCTION ghk(v(mV), cai(mM), cao(mM) ) (millicoul/cm3) {
     LOCAL v_nu, f
 
     f = (1000) * R * (celsius + 273.15) / (2 * FARADAY) :RT/zF
 
     if (fabs(v) < 1e-4) {
-        ghk = f * (ci - co)
+        ghk = f * (cai - cao)
     } else {
         v_nu = v / f
-        ghk = v_nu * (ci - co * exp(-v_nu)) / (1 - exp(-v_nu))
+        ghk = v_nu * (cai - cao * exp(-v_nu)) / (1 - exp(-v_nu))
     }
 }

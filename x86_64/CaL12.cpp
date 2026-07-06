@@ -351,7 +351,7 @@ static int  rates ( _internalthreadargsprotocomma_ double _lv ) {
    minf = 1.0 / ( 1.0 + exp ( - ( _lv + 8.9 ) / 6.7 ) ) ;
    mtau = 1.0 / ( _lm_alpha + _lm_beta ) ;
    htau = 14.77 ;
-   hinf = ( 1.0 / 1.0 + exp ( ( _lv + 13.4 ) / 11.9 ) ) ;
+   hinf = 1.0 / ( 1.0 + exp ( ( _lv + 13.4 ) / 11.9 ) ) ;
     return 0; }
  
 static void _hoc_rates(void) {
@@ -388,17 +388,17 @@ _nt = nrn_threads;
  return(_r);
 }
  
-double ghk ( _internalthreadargsprotocomma_ double _lv , double _lci , double _lco ) {
+double ghk ( _internalthreadargsprotocomma_ double _lv , double _lcli , double _lclo ) {
    double _lghk;
- double _lv_nu , _lf ;
- _lf = ( 1000.0 ) * R * ( celsius + 273.15 ) / ( 2.0 * FARADAY ) ;
-   if ( fabs ( _lv ) < 1e-4 ) {
-     _lghk = _lf * ( _lci - _lco ) ;
+ double _lw , _le ;
+ _lw = _lv * ( 0.001 ) * 2.0 * FARADAY / ( R * ( celsius + 273.16 ) ) ;
+   if ( fabs ( _lw ) > 1e-4 ) {
+     _le = _lw / ( exp ( _lw ) - 1.0 ) ;
      }
    else {
-     _lv_nu = _lv / _lf ;
-     _lghk = _lv_nu * ( _lci - _lco * exp ( - _lv_nu ) ) / ( 1.0 - exp ( - _lv_nu ) ) ;
+     _le = 1.0 - _lw / 2.0 ;
      }
+   _lghk = - ( 0.001 ) * 2.0 * FARADAY * ( _lclo - _lcli * exp ( _lw ) ) * _le ;
    
 return _lghk;
  }
@@ -673,7 +673,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "\n"
   "BREAKPOINT {\n"
   "    SOLVE states METHOD cnexp\n"
-  "    icl = pbar * m * m * (a * h + (1.0 - a)) *  ghk(v, cli, clo)\n"
+  "    icl = pbar * m * m * (a * h + (1.0 - a)) * ghk(v, cli, clo)\n"
   "}\n"
   "\n"
   "INITIAL {\n"
@@ -691,27 +691,28 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "PROCEDURE rates(v (mV)) {\n"
   "    LOCAL m_alpha, m_beta\n"
   "    \n"
-  "    m_alpha = 0.1194 * (v + 8.124)/ (exp((v + 8.124)/9.005) - 1)\n"
+  "    m_alpha = 0.1194 * (v + 8.124) / (exp((v + 8.124) / 9.005) - 1)\n"
   "    m_beta = 2.97 * exp(v / 31.4)\n"
   "\n"
   "    minf = 1 / (1 + exp(- (v + 8.9) / 6.7)) \n"
-  "    mtau = 1/(m_alpha + m_beta)\n"
+  "    mtau = 1 / (m_alpha + m_beta)\n"
   "\n"
   "    htau = 14.77\n"
-  "    hinf = (1 / 1 + exp((v + 13.4) / 11.9))\n"
+  "    hinf = 1 / (1 + exp((v + 13.4) / 11.9))\n"
   "}\n"
   "\n"
-  "FUNCTION ghk(v(mV), ci(mM), co(mM) ) (millicoul/cm3) {\n"
-  "    LOCAL v_nu, f\n"
+  "FUNCTION ghk(v(mV), cli(mM), clo(mM)) (millicoul/cm3) {\n"
+  "    LOCAL w, e\n"
   "\n"
-  "    f = (1000) * R * (celsius + 273.15) / (2 * FARADAY) :RT/zF\n"
+  "    w = v * (0.001) * 2 * FARADAY / (R * (celsius + 273.16))\n"
   "\n"
-  "    if (fabs(v) < 1e-4) {\n"
-  "        ghk = f * (ci - co)\n"
+  "    if (fabs(w) > 1e-4) {\n"
+  "        e = w / (exp(w) - 1)\n"
   "    } else {\n"
-  "        v_nu = v / f\n"
-  "        ghk = v_nu * (ci - co * exp(-v_nu)) / (1 - exp(-v_nu))\n"
+  "        e = 1 - w / 2\n"
   "    }\n"
+  "    \n"
+  "    ghk = - (0.001) * 2 * FARADAY * (clo - cli * exp(w)) * e\n"
   "}\n"
   ;
     hoc_reg_nmodl_filename(mech_type, nmodl_filename);

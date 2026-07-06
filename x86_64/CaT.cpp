@@ -456,16 +456,16 @@ _nt = nrn_threads;
  return(_r);
 }
  
-double ghk ( _internalthreadargsprotocomma_ double _lv , double _lci , double _lco ) {
+double ghk ( _internalthreadargsprotocomma_ double _lv , double _lcai , double _lcao ) {
    double _lghk;
  double _lv_nu , _lf ;
  _lf = ( 1000.0 ) * R * ( celsius + 273.15 ) / ( 2.0 * FARADAY ) ;
    if ( fabs ( _lv ) < 1e-4 ) {
-     _lghk = _lf * ( _lci - _lco ) ;
+     _lghk = _lf * ( _lcai - _lcao ) ;
      }
    else {
      _lv_nu = _lv / _lf ;
-     _lghk = _lv_nu * ( _lci - _lco * exp ( - _lv_nu ) ) / ( 1.0 - exp ( - _lv_nu ) ) ;
+     _lghk = _lv_nu * ( _lcai - _lcao * exp ( - _lv_nu ) ) / ( 1.0 - exp ( - _lv_nu ) ) ;
      }
    
 return _lghk;
@@ -841,16 +841,16 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    }\n"
   "}\n"
   "\n"
-  "FUNCTION ghk(v(mV), ci(mM), co(mM) ) (millicoul/cm3) {\n"
+  "FUNCTION ghk(v(mV), cai(mM), cao(mM) ) (millicoul/cm3) {\n"
   "    LOCAL v_nu, f\n"
   "\n"
   "    f = (1000) * R * (celsius + 273.15) / (2 * FARADAY) :RT/zF\n"
   "\n"
   "    if (fabs(v) < 1e-4) {\n"
-  "        ghk = f * (ci - co)\n"
+  "        ghk = f * (cai - cao)\n"
   "    } else {\n"
   "        v_nu = v / f\n"
-  "        ghk = v_nu * (ci - co * exp(-v_nu)) / (1 - exp(-v_nu))\n"
+  "        ghk = v_nu * (cai - cao * exp(-v_nu)) / (1 - exp(-v_nu))\n"
   "    }\n"
   "}\n"
   ;
