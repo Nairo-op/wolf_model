@@ -47,11 +47,18 @@ e_ca = 120              # calcium reversal potential (mV)
 
 
 soma_mechanisms = {
-    'pas': {'g_pas': 11.5e-6},'naf': {'gbar_naf': 1.5},'nap': {'gbar_nap': 4.0e-5},
-    'kaf': {'gbar_kaf': 0.225},   'kas': {'gbar_kas': 0.0104},
-    'kir': {'gbar_kir': 1.4e-4},'krp': {'gbar_krp': 0.001},
-    'cal12': {'pbar_cal12': 6.7e-6},'cal13': {'pbar_cal13': 4.25e-7},
-    'can': {'pbar_can': 1.0e-5},'car': {'pbar_car': 2.6e-5},'caq': {'pbar_caq': 6.0e-6},
+    'pas': {'g_pas': 11.5e-6},
+    'naf': {'gbar_naf': 1.5},
+    'nap': {'gbar_nap': 4.0e-5},
+    'kaf': {'gbar_kaf': 0.225},
+    'kas': {'gbar_kas': 0.0104},
+    'kir': {'gbar_kir': 1.4e-4},
+    'krp': {'gbar_krp': 0.001},
+    'cal12': {'pbar_cal12': 6.7e-6},
+    'cal13': {'pbar_cal13': 4.25e-7},
+    'can': {'pbar_can': 1.0e-5},
+    'car': {'pbar_car': 2.6e-5},
+    'caq': {'pbar_caq': 6.0e-6},
     'cat': {'pbar_cat': 4.0e-7},
     'bkkca': {'gkbar_bkkca': 0.001},
     'skkca': {'gkbar_skkca': 0.145},
@@ -61,13 +68,20 @@ soma_mechanisms = {
 
 
 pdend_mechanisms = {
-    'pas': {'g_pas': 11.5e-6}, 'naf': {'gbar_naf': 0.0195}, 'nap': {'gbar_nap': 1.38e-7},
-    'kaf': {'gbar_kaf': 0.225}, 'kas': {'gbar_kas': 0.0104}, 'kir': {'gbar_kir': 1.4e-4},
+    'pas': {'g_pas': 11.5e-6}, 
+    'naf': {'gbar_naf': 0.0195}, 
+    'nap': {'gbar_nap': 1.38e-7},
+    'kaf': {'gbar_kaf': 0.225}, 
+    'kas': {'gbar_kas': 0.0104}, 
+    'kir': {'gbar_kir': 1.4e-4},
     'bkkca': {'gkbar_bkkca': 0.001}, 
     'skkca': {'gkbar_skkca': 0.145},
-    'cal12': {'pbar_cal12': 6.7e-6}, 'cal13': {'pbar_cal13': 4.25e-7},
-    'can': {'pbar_can': 1.0e-5}, 'car': {'pbar_car': 2.6e-5},
-    'caq': {'pbar_caq': 6.0e-6}, 'cat': {'pbar_cat': 4.0e-7},
+    'cal12': {'pbar_cal12': 6.7e-6}, 
+    'cal13': {'pbar_cal13': 4.25e-7},
+    'can': {'pbar_can': 1.0e-5}, 
+    'car': {'pbar_car': 2.6e-5},
+    'caq': {'pbar_caq': 6.0e-6}, 
+    'cat': {'pbar_cat': 4.0e-7},
     'cadyn_lt': {},
     'cadyn_nqr': {}
 
@@ -83,9 +97,12 @@ sdend_mechanisms = {
     'kas': {'gbar_kas': 9.51e-4 }, 
     'bkkca': {'gkbar_bkkca': 0.001},
     'skkca': {'gkbar_skkca': 0.145},
-    'cal12': {'pbar_cal12': 6.7e-6 }, 'cal13': {'pbar_cal13': 4.25e-7 },
-    'can': {'pbar_can': 1.0e-5 }, 'car': {'pbar_car': 2.6e-5 },
-    'caq': {'pbar_caq': 6.0e-6 }, 'cat': {'pbar_cat': 4.0e-7 },
+    'cal12': {'pbar_cal12': 6.7e-6 }, 
+    'cal13': {'pbar_cal13': 4.25e-7 },
+    'can': {'pbar_can': 1.0e-5 }, 
+    'car': {'pbar_car': 2.6e-5 },
+    'caq': {'pbar_caq': 6.0e-6 },
+    'cat': {'pbar_cat': 4.0e-7 },
     'cadyn_nqr': {},
     'cadyn_lt': {}  
 }
@@ -99,15 +116,19 @@ tdend_mechanisms = {
     'kas': {'gbar_kas': 9.51e-4 }, 
     'bkkca': {'gkbar_bkkca': 0.001}, 
     'skkca': {'gkbar_skkca': 0.145},
-    'cal12': {'pbar_cal12': 6.7e-6 }, 'cal13': {'pbar_cal13': 4.25e-7 },
-    'can': {'pbar_can': 1.0e-5 }, 'car': {'pbar_car': 2.6e-5 },
-    'caq': {'pbar_caq': 6.0e-6 }, 'cat': {'pbar_cat': 4.0e-7 },
+    'cal12': {'pbar_cal12': 6.7e-6 }, 
+    'cal13': {'pbar_cal13': 4.25e-7 },
+    'can': {'pbar_can': 1.0e-5 }, 
+    'car': {'pbar_car': 2.6e-5 },
+    'caq': {'pbar_caq': 6.0e-6 }, 
+    'cat': {'pbar_cat': 4.0e-7 },
     'cadyn_nqr': {},
     'cadyn_lt': {}
 }
 
 for mech_dict in [soma_mechanisms, pdend_mechanisms, sdend_mechanisms, tdend_mechanisms]:
-    mech_dict['skkca']['gkbar_skkca'] = 0.0175
+    mech_dict['skkca']['gkbar_skkca'] = 0.001
+    mech_dict['bkkca']['gkbar_bkkca'] = 0.145
 
 
 def insert_mechanisms(sec, mech_dict):
@@ -173,7 +194,7 @@ prim_dend, sec_dend, tert_dend = create_all_dendrite_br2(soma)
 stim = h.IClamp(soma(0))
 stim.delay = 200   # ms
 stim.dur = 500     # ms
-stim.amp = 0.250   # nA
+stim.amp = 0.271   # nA
 
 
 # Setup Recording
