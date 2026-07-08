@@ -1,4 +1,4 @@
-#!/home/amajnas/.local/share/pipx/venvs/neuron/bin/python
+#!/home/amajnas/neuron_env/bin/python3
 """
 A generic wrapper to access nrn binaries from a python installation
 Please create a softlink with the binary name to be called.

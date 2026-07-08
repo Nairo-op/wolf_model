@@ -60,7 +60,7 @@ KINETIC kin {
 PROCEDURE rates( v(mV)) {
 	 k1=alp( 0.1, v,  -10.0,   1.0 )
 	 k2=alp( 0.1, v, -120.0, -10.0 )
-	 k3=alpha( 0.001, 1.0, v, -20.0, 7.0 ) *1.0e8* ( cai*1.0(/mM) )^3
+	 k3=alpha( 0.001, 1.0, v, -20.0, 7.0 ) * 1.0e8 * pow(cai * 1.0(/mM), 3)
 	 k4=alp( 0.01, v, -44.0,  -5.0 )
 }
 
@@ -69,7 +69,7 @@ FUNCTION alpha( tmin(ms), tmax(ms), v(mV), vhalf(mV), k(mV) )(/ms){
 }
 
 FUNCTION alp( tmin(ms), v(mV), vhalf(mV), k(mV) )(/ms){
-        alp = 1.0 / ( tmin + exp( -(v-vhalf) / k )*1.0(ms) )
+        alp = 1.0 / ( tmin + exp( (v-vhalf) / k )*1.0(ms) )
 }
 
 

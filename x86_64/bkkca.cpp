@@ -407,7 +407,7 @@ for(_i=1;_i<3;_i++){
 static int  rates ( _internalthreadargsprotocomma_ double _lv ) {
    k1 = alp ( _threadargscomma_ 0.1 , _lv , - 10.0 , 1.0 ) ;
    k2 = alp ( _threadargscomma_ 0.1 , _lv , - 120.0 , - 10.0 ) ;
-   k3 = alpha ( _threadargscomma_ 0.001 , 1.0 , _lv , - 20.0 , 7.0 ) * 1.0e8 * pow( ( cai * 1.0 ) , 3.0 ) ;
+   k3 = alpha ( _threadargscomma_ 0.001 , 1.0 , _lv , - 20.0 , 7.0 ) * 1.0e8 * pow ( cai * 1.0 , 3.0 ) ;
    k4 = alp ( _threadargscomma_ 0.01 , _lv , - 44.0 , - 5.0 ) ;
     return 0; }
  
@@ -486,7 +486,7 @@ _nt = nrn_threads;
  
 double alp ( _internalthreadargsprotocomma_ double _ltmin , double _lv , double _lvhalf , double _lk ) {
    double _lalp;
- _lalp = 1.0 / ( _ltmin + exp ( - ( _lv - _lvhalf ) / _lk ) * 1.0 ) ;
+ _lalp = 1.0 / ( _ltmin + exp ( ( _lv - _lvhalf ) / _lk ) * 1.0 ) ;
    
 return _lalp;
  }
@@ -868,7 +868,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "PROCEDURE rates( v(mV)) {\n"
   "	 k1=alp( 0.1, v,  -10.0,   1.0 )\n"
   "	 k2=alp( 0.1, v, -120.0, -10.0 )\n"
-  "	 k3=alpha( 0.001, 1.0, v, -20.0, 7.0 ) *1.0e8* ( cai*1.0(/mM) )^3\n"
+  "	 k3=alpha( 0.001, 1.0, v, -20.0, 7.0 ) * 1.0e8 * pow(cai * 1.0(/mM), 3)\n"
   "	 k4=alp( 0.01, v, -44.0,  -5.0 )\n"
   "}\n"
   "\n"
@@ -877,7 +877,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "}\n"
   "\n"
   "FUNCTION alp( tmin(ms), v(mV), vhalf(mV), k(mV) )(/ms){\n"
-  "        alp = 1.0 / ( tmin + exp( -(v-vhalf) / k )*1.0(ms) )\n"
+  "        alp = 1.0 / ( tmin + exp( (v-vhalf) / k )*1.0(ms) )\n"
   "}\n"
   "\n"
   "\n"

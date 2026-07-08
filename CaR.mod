@@ -94,15 +94,16 @@ PROCEDURE rates(v (mV)) {
     }
 }
 
-FUNCTION ghk(v(mV), cai(mM), cao(mM) ) (millicoul/cm3) {
-    LOCAL v_nu, f
+FUNCTION ghk(v(mV), ci(mM), co(mM)) (millicoul/cm3) {
+    LOCAL w, e
 
-    f = (1000) * R * (celsius + 273.15) / (2 * FARADAY) :RT/zF
+    w = v * (0.001) * 2 * FARADAY / (R * (celsius + 273.16))
 
-    if (fabs(v) < 1e-4) {
-        ghk = f * (cai - cao )
+    if (fabs(w) > 1e-4) {
+        e = w / (exp(w) - 1)
     } else {
-        v_nu = v / f
-        ghk = v_nu * (cai - cao * exp(-v_nu)) / (1 - exp(-v_nu))
+        e = 1 - w / 2
     }
+    
+    ghk = - (0.001) * 2 * FARADAY * (co - ci* exp(w)) * e
 }

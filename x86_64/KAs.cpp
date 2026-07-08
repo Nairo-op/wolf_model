@@ -283,7 +283,7 @@ extern void _cvode_abstol( Symbol**, double*, int);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
 static int _reset;
-static const char *modelname = "";
+static const char *modelname = "KAs Channel";
 
 static int error;
 static int _ninits = 0;
@@ -548,7 +548,7 @@ _first = 0;
 static void register_nmodl_text_and_filename(int mech_type) {
     const char* nmodl_filename = "/home/amajnas/wolf_model/KAs.mod";
     const char* nmodl_file_text = 
-  "TITLE \n"
+  "TITLE KAs Channel\n"
   "\n"
   "NEURON {\n"
   "    SUFFIX kas\n"

@@ -1,0 +1,342 @@
+/*
+ * Nucleus Accumbens Medium Spiny Neuron (MSN) Model
+ * * Converted from Python to HOC.
+ * Includes complete geometry, multi-compartment dendritic arbor, 
+ * active ionic mechanisms, calcium dynamics, and a GUI control panel.
+ */
+
+// Load the standard run library for simulation controls
+load_file("stdrun.hoc")
+load_file("nrngui.hoc")
+
+// Define temperature
+celsius = 35.0
+
+// Define global reversal potentials with unique names to prevent namespace conflicts
+GLOBAL_E_PAS = -70.0
+GLOBAL_E_NA  = 50.0
+GLOBAL_E_K   = -90.0
+GLOBAL_E_CA  = 120.0
+
+// Simulation configuration variables
+v_init = -87.75
+tstop = 900
+
+// Declare cell compartments
+create soma
+create prim_dend[4]
+create sec_dend[8]
+create tert_dend[16]
+
+/*
+ * Biophysics and geometry initialization procedures
+ */
+
+proc init_soma() {
+    soma {
+        nseg = 1
+        diam = 16
+        L = 16
+        Ra = 100.0
+        cm = 1.0
+        
+        // EXPLICITLY INSERT ION TO AVOID CRASH
+        insert ca_ion
+        
+        // Passive conductance
+        insert pas
+        g_pas = 11.5e-6
+        e_pas = GLOBAL_E_PAS
+        
+        // Active Sodium channels
+        insert naf
+        gbar_naf = 1.5
+        ena = GLOBAL_E_NA
+        
+        insert nap
+        gbar_nap = 4.0e-5
+        
+        // Potassium channels
+        insert kaf
+        gbar_kaf = 0.225
+        ek = GLOBAL_E_K
+        
+        insert kas
+        gbar_kas = 0.0104
+        
+        insert kir
+        gbar_kir = 1.4e-4
+        
+        insert krp
+        gbar_krp = 0.001
+        
+        // Calcium channels
+        insert cal12
+        pbar_cal12 = 6.7e-6
+        eca = GLOBAL_E_CA
+        
+        insert cal13
+        pbar_cal13 = 4.25e-7
+        
+        insert can
+        pbar_can = 1.0e-5
+        
+        insert car
+        pbar_car = 2.6e-5
+        
+        insert caq
+        pbar_caq = 6.0e-6
+        
+        insert cat
+        pbar_cat = 4.0e-7
+        
+        // Calcium-dependent Potassium channels
+        insert bkkca
+        gkbar_bkkca = 0.001
+        
+        insert skkca
+        gkbar_skkca = 0.145
+        
+        // Calcium Dynamics
+        insert cadyn_lt
+        insert cadyn_nqr
+        
+        if (name_declared("ecl")) {
+            ecl = GLOBAL_E_CA
+        }
+    }
+}
+
+proc init_prim_dend() { local i
+    for i=0, 3 {
+        prim_dend[i] {
+            nseg = 1
+            diam = 2.25
+            L = 20
+            Ra = 100.0
+            cm = 1.0
+            
+            insert ca_ion
+            
+            insert pas
+            g_pas = 11.5e-6
+            e_pas = GLOBAL_E_PAS
+            
+            insert naf
+            gbar_naf = 0.0195
+            ena = GLOBAL_E_NA
+            
+            insert nap
+            gbar_nap = 1.38e-7
+            
+            insert kaf
+            gbar_kaf = 0.225
+            ek = GLOBAL_E_K
+            
+            insert kas
+            gbar_kas = 0.0104
+            
+            insert kir
+            gbar_kir = 1.4e-4
+            
+            insert bkkca
+            gkbar_bkkca = 0.001
+            
+            insert skkca
+            gkbar_skkca = 0.145
+            
+            insert cal12
+            pbar_cal12 = 6.7e-6
+            eca = GLOBAL_E_CA
+            
+            insert cal13
+            pbar_cal13 = 4.25e-7
+            
+            insert can
+            pbar_can = 1.0e-5
+            
+            insert car
+            pbar_car = 2.6e-5
+            
+            insert caq
+            pbar_caq = 6.0e-6
+            
+            insert cat
+            pbar_cat = 4.0e-7
+            
+            insert cadyn_lt
+            insert cadyn_nqr
+            
+            if (name_declared("ecl")) {
+                ecl = GLOBAL_E_CA
+            }
+        }
+    }
+}
+
+proc init_sec_dend() { local i
+    for i=0, 7 {
+        sec_dend[i] {
+            nseg = 1
+            diam = 1.1
+            L = 24.23
+            Ra = 100.0
+            cm = 1.0
+            
+            insert ca_ion
+            
+            insert pas
+            g_pas = 11.5e-6
+            e_pas = GLOBAL_E_PAS
+            
+            insert naf
+            gbar_naf = 0.0195
+            ena = GLOBAL_E_NA
+            
+            insert nap
+            gbar_nap = 1.38e-7
+            
+            insert kir
+            gbar_kir = 1.4e-4
+            
+            insert kaf
+            gbar_kaf = 0.021
+            ek = GLOBAL_E_K
+            
+            insert kas
+            gbar_kas = 9.51e-4
+            
+            insert bkkca
+            gkbar_bkkca = 0.001
+            
+            insert skkca
+            gkbar_skkca = 0.145
+            
+            insert cal12
+            pbar_cal12 = 6.7e-6
+            eca = GLOBAL_E_CA
+            
+            insert cal13
+            pbar_cal13 = 4.25e-7
+            
+            insert can
+            pbar_can = 1.0e-5
+            
+            insert car
+            pbar_car = 2.6e-5
+            
+            insert caq
+            pbar_caq = 6.0e-6
+            
+            insert cat
+            pbar_cat = 4.0e-7
+            
+            insert cadyn_lt
+            insert cadyn_nqr
+            
+            if (name_declared("ecl")) {
+                ecl = GLOBAL_E_CA
+            }
+        }
+    }
+}
+
+proc init_tert_dend() { local i
+    for i=0, 15 {
+        tert_dend[i] {
+            nseg = 11
+            diam = 0.72
+            L = 395.2
+            Ra = 100.0
+            cm = 1.0
+            
+            insert ca_ion
+            
+            insert pas
+            g_pas = 11.5e-6
+            e_pas = GLOBAL_E_PAS
+            
+            insert naf
+            gbar_naf = 0.0195
+            ena = GLOBAL_E_NA
+            
+            insert nap
+            gbar_nap = 1.38e-7
+            
+            insert kir
+            gbar_kir = 1.4e-4
+            
+            insert kaf
+            gbar_kaf = 0.021
+            ek = GLOBAL_E_K
+            
+            insert kas
+            gbar_kas = 9.51e-4
+            
+            insert bkkca
+            gkbar_bkkca = 0.001
+            
+            insert skkca
+            gkbar_skkca = 0.145
+            
+            insert cal12
+            pbar_cal12 = 6.7e-6
+            eca = GLOBAL_E_CA
+            
+            insert cal13
+            pbar_cal13 = 4.25e-7
+            
+            insert can
+            pbar_can = 1.0e-5
+            
+            insert car
+            pbar_car = 2.6e-5
+            
+            insert caq
+            pbar_caq = 6.0e-6
+            
+            insert cat
+            pbar_cat = 4.0e-7
+            
+            insert cadyn_lt
+            insert cadyn_nqr
+            
+            if (name_declared("ecl")) {
+                ecl = GLOBAL_E_CA
+            }
+        }
+    }
+}
+
+/*
+ * Establish arbor connections
+ */
+proc connect_all() { local i, pdend_index, sdend_index
+    // Connect Primary Dendrites to Soma (2 on right, 2 on left)
+    for i=0, 3 {
+        if (i < 2) {
+            connect prim_dend[i](0), soma(1)
+        } else {
+            connect prim_dend[i](0), soma(0)
+        }
+    }
+    
+    // Connect Secondary Dendrites to Primaries (2 secondary branches per primary)
+    for i=0, 7 {
+        pdend_index = int(i / 2)
+        connect sec_dend[i](0), prim_dend[pdend_index](1)
+    }
+    
+    // Connect Tertiary Dendrites to Secondaries (2 tertiary branches per secondary)
+    for i=0, 15 {
+        sdend_index = int(i / 2)
+        connect tert_dend[i](0), sec_dend[sdend_index](1)
+    }
+}
+
+// Instantiate and initialize morphology and biophysics
+init_soma()
+init_prim_dend()
+init_sec_dend()
+init_tert_dend()
+connect_all()

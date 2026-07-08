@@ -27,7 +27,8 @@ PARAMETER {
     ek      (mV)
     celsius (degC)    : Read from NEURON environment
     
-    : Model parameters from Moczydlowski & Latorre (1983) / typical defaults
+    : Model parameters from Moczydlowski & Latorre (1983) 
+    
     d1 = 0.84         : Gating valence for activation
     d2 = 1.0          : Gating valence for deactivation
     k1 = 0.18 (mM):0.48e-3 (mM) : Dissociation constant 1 

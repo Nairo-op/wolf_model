@@ -1,4 +1,4 @@
-TITLE 
+TITLE KAs Channel
 
 NEURON {
     SUFFIX kas

@@ -17,7 +17,7 @@
 // clang-format on
 #include "neuron/cache/mechanism_range.hpp"
 static constexpr auto number_of_datum_variables = 3;
-static constexpr auto number_of_floating_point_variables = 9;
+static constexpr auto number_of_floating_point_variables = 10;
 namespace {
 template <typename T>
 using _nrn_mechanism_std_vector = std::vector<T>;
@@ -80,10 +80,12 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define minf_columnindex 5
 #define mtau _ml->template fpfield<6>(_iml)
 #define mtau_columnindex 6
-#define v _ml->template fpfield<7>(_iml)
-#define v_columnindex 7
-#define _g _ml->template fpfield<8>(_iml)
-#define _g_columnindex 8
+#define qt _ml->template fpfield<7>(_iml)
+#define qt_columnindex 7
+#define v _ml->template fpfield<8>(_iml)
+#define v_columnindex 8
+#define _g _ml->template fpfield<9>(_iml)
+#define _g_columnindex 9
 #define _ion_ek *(_ml->dptr_field<0>(_iml))
 #define _p_ion_ek static_cast<neuron::container::data_handle<double>>(_ppvar[0])
 #define _ion_ik *(_ml->dptr_field<1>(_iml))
@@ -96,6 +98,7 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
  /* _prop_id kind of shadows _extcall_prop to allow validity checking. */
  static _nrn_non_owning_id_without_container _prop_id{};
  /* external NEURON variables */
+ extern double celsius;
  /* declaration of user functions */
  static void _hoc_rates(void);
  static int _mechtype;
@@ -197,10 +200,10 @@ static void nrn_alloc(Prop* _prop) {
      _nrn_mechanism_cache_instance _ml_real{_prop};
     auto* const _ml = &_ml_real;
     size_t const _iml{};
-    assert(_nrn_mechanism_get_num_vars(_prop) == 9);
+    assert(_nrn_mechanism_get_num_vars(_prop) == 10);
  	/*initialize range parameters*/
  	gbar = _parm_default[0]; /* 0.00014 */
- 	 assert(_nrn_mechanism_get_num_vars(_prop) == 9);
+ 	 assert(_nrn_mechanism_get_num_vars(_prop) == 10);
  	_nrn_mechanism_access_dparam(_prop) = _ppvar;
  	/*connect ionic variables to this model*/
  prop_ion = need_memb(_k_sym);
@@ -243,13 +246,14 @@ extern void _cvode_abstol( Symbol**, double*, int);
                                        _nrn_mechanism_field<double>{"ek"} /* 4 */,
                                        _nrn_mechanism_field<double>{"minf"} /* 5 */,
                                        _nrn_mechanism_field<double>{"mtau"} /* 6 */,
-                                       _nrn_mechanism_field<double>{"v"} /* 7 */,
-                                       _nrn_mechanism_field<double>{"_g"} /* 8 */,
+                                       _nrn_mechanism_field<double>{"qt"} /* 7 */,
+                                       _nrn_mechanism_field<double>{"v"} /* 8 */,
+                                       _nrn_mechanism_field<double>{"_g"} /* 9 */,
                                        _nrn_mechanism_field<double*>{"_ion_ek", "k_ion"} /* 0 */,
                                        _nrn_mechanism_field<double*>{"_ion_ik", "k_ion"} /* 1 */,
                                        _nrn_mechanism_field<double*>{"_ion_dikdv", "k_ion"} /* 2 */,
                                        _nrn_mechanism_field<int>{"_cvode_ieq", "cvodeieq"} /* 3 */);
-  hoc_register_prop_size(_mechtype, 9, 4);
+  hoc_register_prop_size(_mechtype, 10, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "k_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "k_ion");
   hoc_register_dparam_semantics(_mechtype, 2, "k_ion");
@@ -262,6 +266,7 @@ extern void _cvode_abstol( Symbol**, double*, int);
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
+ static double Q10 = 3.0;
 static int _reset;
 static const char *modelname = "";
 
@@ -300,10 +305,10 @@ static int  rates ( _internalthreadargsprotocomma_ double _lv ) {
    double _lv_idx , _lfraction ;
  minf = 1.0 / ( 1.0 + exp ( ( _lv - ( - 82.0 ) ) / 13.0 ) ) ;
    if ( _lv <= - 100.0 ) {
-     mtau = 14.93 ;
+     mtau = 7.465 ;
      }
    else if ( _lv >= 0.0 ) {
-     mtau = 16.0 ;
+     mtau = 8.0 ;
      }
    else {
      _lv_idx = floor ( ( _lv - ( - 100.0 ) ) / 10.0 ) ;
@@ -434,6 +439,7 @@ static void initmodel(_internalthreadargsproto_) {
   int _i; double _save;{
   m = m0;
  {
+   qt = pow( Q10 , ( ( celsius - 35.0 ) / 10.0 ) ) ;
    rates ( _threadargscomma_ v ) ;
    m = minf ;
    }
@@ -571,6 +577,9 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    (S) = (siemens)\n"
   "}\n"
   "\n"
+  "CONSTANT{\n"
+  "    Q10 = 3.0 (1)\n"
+  "}\n"
   "PARAMETER {\n"
   "    gbar = 1.4e-4 (S/cm2)\n"
   "}\n"
@@ -585,6 +594,8 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    ik (mA/cm2)\n"
   "    minf\n"
   "    mtau (ms)\n"
+  "    qt  (1)\n"
+  "\n"
   "}\n"
   "\n"
   "BREAKPOINT {\n"
@@ -593,6 +604,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "}\n"
   "\n"
   "INITIAL {\n"
+  "    qt = Q10^((celsius - 35)/10) : since we are running in 35 degree we dont need this now\n"
   "    rates(v)\n"
   "    m = minf\n"
   "}\n"
@@ -611,9 +623,11 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "    : Range bounds: -100.0 mV to 0.0 mV, Step size: 10.0 mV\n"
   "    \n"
   "    if (v <= -100.0) {\n"
-  "        mtau = 14.93\n"
+  "        : mtau = 14.93\n"
+  "        mtau = 7.465\n"
   "    } else if (v >= 0.0) {\n"
-  "        mtau = 16.0\n"
+  "        : mtau = 16.0\n"
+  "        mtau = 8.0\n"
   "    } else {\n"
   "        : Map voltage to table index (step size is 10 mV, starting at -100 mV)\n"
   "        v_idx = floor((v - (-100.0)) / 10.0)\n"

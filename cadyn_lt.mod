@@ -47,7 +47,7 @@ ASSIGNED {
 	drive_channel	(mM/ms)
 	drive_pump	(mM/ms)
 }
-	
+
 BREAKPOINT {
 	SOLVE state METHOD cnexp
 }

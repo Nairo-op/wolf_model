@@ -576,7 +576,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "	drive_channel	(mM/ms)\n"
   "	drive_pump	(mM/ms)\n"
   "}\n"
-  "	\n"
+  "\n"
   "BREAKPOINT {\n"
   "	SOLVE state METHOD cnexp\n"
   "}\n"

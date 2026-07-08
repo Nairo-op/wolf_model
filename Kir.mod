@@ -12,6 +12,9 @@ UNITS {
     (S) = (siemens)
 }
 
+CONSTANT{
+    Q10 = 3.0 (1)
+}
 PARAMETER {
     gbar = 1.4e-4 (S/cm2)
 }
@@ -26,6 +29,8 @@ ASSIGNED {
     ik (mA/cm2)
     minf
     mtau (ms)
+    qt  (1)
+
 }
 
 BREAKPOINT {
@@ -34,6 +39,7 @@ BREAKPOINT {
 }
 
 INITIAL {
+    qt = Q10^((celsius - 35)/10) : since we are running in 35 degree we dont need this now
     rates(v)
     m = minf
 }
@@ -52,9 +58,11 @@ PROCEDURE rates(v (mV)) {
     : Range bounds: -100.0 mV to 0.0 mV, Step size: 10.0 mV
     
     if (v <= -100.0) {
-        mtau = 14.93
+        : mtau = 14.93
+        mtau = 7.465
     } else if (v >= 0.0) {
-        mtau = 16.0
+        : mtau = 16.0
+        mtau = 8.0
     } else {
         : Map voltage to table index (step size is 10 mV, starting at -100 mV)
         v_idx = floor((v - (-100.0)) / 10.0)
