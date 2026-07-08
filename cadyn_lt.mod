@@ -5,7 +5,7 @@ INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
 NEURON {
 	SUFFIX cadyn_lt
-	USEION cl READ icl, cli WRITE cli
+	USEION cal READ ical, cali WRITE cali
 	RANGE pump, clinf, taur, drive, F
 }
 
@@ -35,15 +35,15 @@ PARAMETER {
 }
 
 STATE {
-	cli		(mM) 
+	cali		(mM) 
 }
 
 INITIAL {
-	cli = clinf
+	cali = clinf
 }
 
 ASSIGNED {
-	icl 	(mA/cm2)
+	ical 	(mA/cm2)
 	drive_channel	(mM/ms)
 	drive_pump	(mM/ms)
 }
@@ -53,18 +53,18 @@ BREAKPOINT {
 }
 
 DERIVATIVE state { 
-	drive_channel =  - drive * icl / (2 * FARADAY * depth * F)
+	drive_channel =  - drive * ical / (2 * FARADAY * depth * F)
 	    : this part converts the incoming calcium (from channels) into
 	    : a corresponding change in internal concentration
 
 	if (drive_channel <= 0.) { drive_channel = 0. }	: cannot pump inward
 
-	drive_pump = -kt * cli / (cli + kd )		: Michaelis-Menten
+	drive_pump = -kt * cali / (cali + kd )		: Michaelis-Menten
 	    : this accounts for calcium being pumped back out - M-M
 	    : represents mechanism that is rate-limited by low ion conc.
 	    : at one end and max pumping rate at high end
 	
-	cli' = ( drive_channel + pump*drive_pump + (clinf-cli)/taur )
+	cali' = ( drive_channel + pump*drive_pump + (clinf-cali)/taur )
 	    : (cainf-cai)/taur represents exponential decay towards cainf
 	    : at a time constant of taur from diffusive processe
 }

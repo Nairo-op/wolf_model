@@ -70,18 +70,18 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define pbar_columnindex 0
 #define a _ml->template fpfield<1>(_iml)
 #define a_columnindex 1
-#define icl _ml->template fpfield<2>(_iml)
-#define icl_columnindex 2
+#define ical _ml->template fpfield<2>(_iml)
+#define ical_columnindex 2
 #define m _ml->template fpfield<3>(_iml)
 #define m_columnindex 3
 #define h _ml->template fpfield<4>(_iml)
 #define h_columnindex 4
-#define ecl _ml->template fpfield<5>(_iml)
-#define ecl_columnindex 5
-#define cli _ml->template fpfield<6>(_iml)
-#define cli_columnindex 6
-#define clo _ml->template fpfield<7>(_iml)
-#define clo_columnindex 7
+#define ecal _ml->template fpfield<5>(_iml)
+#define ecal_columnindex 5
+#define cali _ml->template fpfield<6>(_iml)
+#define cali_columnindex 6
+#define calo _ml->template fpfield<7>(_iml)
+#define calo_columnindex 7
 #define minf _ml->template fpfield<8>(_iml)
 #define minf_columnindex 8
 #define mtau _ml->template fpfield<9>(_iml)
@@ -98,15 +98,15 @@ void _nrn_mechanism_register_data_fields(Args&&... args) {
 #define v_columnindex 14
 #define _g _ml->template fpfield<15>(_iml)
 #define _g_columnindex 15
-#define _ion_ecl *(_ml->dptr_field<0>(_iml))
-#define _p_ion_ecl static_cast<neuron::container::data_handle<double>>(_ppvar[0])
-#define _ion_cli *(_ml->dptr_field<1>(_iml))
-#define _p_ion_cli static_cast<neuron::container::data_handle<double>>(_ppvar[1])
-#define _ion_clo *(_ml->dptr_field<2>(_iml))
-#define _p_ion_clo static_cast<neuron::container::data_handle<double>>(_ppvar[2])
-#define _ion_icl *(_ml->dptr_field<3>(_iml))
-#define _p_ion_icl static_cast<neuron::container::data_handle<double>>(_ppvar[3])
-#define _ion_dicldv *(_ml->dptr_field<4>(_iml))
+#define _ion_ecal *(_ml->dptr_field<0>(_iml))
+#define _p_ion_ecal static_cast<neuron::container::data_handle<double>>(_ppvar[0])
+#define _ion_cali *(_ml->dptr_field<1>(_iml))
+#define _p_ion_cali static_cast<neuron::container::data_handle<double>>(_ppvar[1])
+#define _ion_calo *(_ml->dptr_field<2>(_iml))
+#define _p_ion_calo static_cast<neuron::container::data_handle<double>>(_ppvar[2])
+#define _ion_ical *(_ml->dptr_field<3>(_iml))
+#define _p_ion_ical static_cast<neuron::container::data_handle<double>>(_ppvar[3])
+#define _ion_dicaldv *(_ml->dptr_field<4>(_iml))
  /* Thread safe. No static _ml, _iml or _ppvar. */
  static int hoc_nrnpointerindex =  -1;
  static _nrn_mechanism_std_vector<Datum> _extcall_thread;
@@ -157,7 +157,7 @@ static NPyDirectMechFunc npy_direct_func_proc[] = {
 };
  static HocParmUnits _hoc_parm_units[] = {
  {"pbar_cal12", "cm/s"},
- {"icl_cal12", "mA/cm2"},
+ {"ical_cal12", "mA/cm2"},
  {0, 0}
 };
  static double delta_t = 0.01;
@@ -202,13 +202,13 @@ static void _ode_matsol(_nrn_model_sorted_token const&, NrnThread*, Memb_list*, 
  "pbar_cal12",
  "a_cal12",
  0,
- "icl_cal12",
+ "ical_cal12",
  0,
  "m_cal12",
  "h_cal12",
  0,
  0};
- static Symbol* _cl_sym;
+ static Symbol* _cal_sym;
  
  /* Used by NrnProperty */
  static _nrn_mechanism_std_vector<double> _parm_default{
@@ -233,13 +233,13 @@ static void nrn_alloc(Prop* _prop) {
  	 assert(_nrn_mechanism_get_num_vars(_prop) == 16);
  	_nrn_mechanism_access_dparam(_prop) = _ppvar;
  	/*connect ionic variables to this model*/
- prop_ion = need_memb(_cl_sym);
+ prop_ion = need_memb(_cal_sym);
  nrn_promote(prop_ion, 1, 1);
- 	_ppvar[0] = _nrn_mechanism_get_param_handle(prop_ion, 0); /* ecl */
- 	_ppvar[1] = _nrn_mechanism_get_param_handle(prop_ion, 1); /* cli */
- 	_ppvar[2] = _nrn_mechanism_get_param_handle(prop_ion, 2); /* clo */
- 	_ppvar[3] = _nrn_mechanism_get_param_handle(prop_ion, 3); /* icl */
- 	_ppvar[4] = _nrn_mechanism_get_param_handle(prop_ion, 4); /* _ion_dicldv */
+ 	_ppvar[0] = _nrn_mechanism_get_param_handle(prop_ion, 0); /* ecal */
+ 	_ppvar[1] = _nrn_mechanism_get_param_handle(prop_ion, 1); /* cali */
+ 	_ppvar[2] = _nrn_mechanism_get_param_handle(prop_ion, 2); /* calo */
+ 	_ppvar[3] = _nrn_mechanism_get_param_handle(prop_ion, 3); /* ical */
+ 	_ppvar[4] = _nrn_mechanism_get_param_handle(prop_ion, 4); /* _ion_dicaldv */
  
 }
  static void _initlists();
@@ -257,8 +257,8 @@ extern void _cvode_abstol( Symbol**, double*, int);
  extern "C" void _CaL12_reg() {
 	int _vectorized = 1;
   _initlists();
- 	ion_reg("cl", 2.0);
- 	_cl_sym = hoc_lookup("cl_ion");
+ 	ion_reg("cal", 2.0);
+ 	_cal_sym = hoc_lookup("cal_ion");
  	register_mech(_mechanism, nrn_alloc,nrn_cur, nrn_jacob, nrn_state, nrn_init, hoc_nrnpointerindex, 1);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
  hoc_register_parm_default(_mechtype, &_parm_default);
@@ -270,12 +270,12 @@ extern void _cvode_abstol( Symbol**, double*, int);
    _nrn_mechanism_register_data_fields(_mechtype,
                                        _nrn_mechanism_field<double>{"pbar"} /* 0 */,
                                        _nrn_mechanism_field<double>{"a"} /* 1 */,
-                                       _nrn_mechanism_field<double>{"icl"} /* 2 */,
+                                       _nrn_mechanism_field<double>{"ical"} /* 2 */,
                                        _nrn_mechanism_field<double>{"m"} /* 3 */,
                                        _nrn_mechanism_field<double>{"h"} /* 4 */,
-                                       _nrn_mechanism_field<double>{"ecl"} /* 5 */,
-                                       _nrn_mechanism_field<double>{"cli"} /* 6 */,
-                                       _nrn_mechanism_field<double>{"clo"} /* 7 */,
+                                       _nrn_mechanism_field<double>{"ecal"} /* 5 */,
+                                       _nrn_mechanism_field<double>{"cali"} /* 6 */,
+                                       _nrn_mechanism_field<double>{"calo"} /* 7 */,
                                        _nrn_mechanism_field<double>{"minf"} /* 8 */,
                                        _nrn_mechanism_field<double>{"mtau"} /* 9 */,
                                        _nrn_mechanism_field<double>{"hinf"} /* 10 */,
@@ -284,18 +284,18 @@ extern void _cvode_abstol( Symbol**, double*, int);
                                        _nrn_mechanism_field<double>{"Dh"} /* 13 */,
                                        _nrn_mechanism_field<double>{"v"} /* 14 */,
                                        _nrn_mechanism_field<double>{"_g"} /* 15 */,
-                                       _nrn_mechanism_field<double*>{"_ion_ecl", "cl_ion"} /* 0 */,
-                                       _nrn_mechanism_field<double*>{"_ion_cli", "cl_ion"} /* 1 */,
-                                       _nrn_mechanism_field<double*>{"_ion_clo", "cl_ion"} /* 2 */,
-                                       _nrn_mechanism_field<double*>{"_ion_icl", "cl_ion"} /* 3 */,
-                                       _nrn_mechanism_field<double*>{"_ion_dicldv", "cl_ion"} /* 4 */,
+                                       _nrn_mechanism_field<double*>{"_ion_ecal", "cal_ion"} /* 0 */,
+                                       _nrn_mechanism_field<double*>{"_ion_cali", "cal_ion"} /* 1 */,
+                                       _nrn_mechanism_field<double*>{"_ion_calo", "cal_ion"} /* 2 */,
+                                       _nrn_mechanism_field<double*>{"_ion_ical", "cal_ion"} /* 3 */,
+                                       _nrn_mechanism_field<double*>{"_ion_dicaldv", "cal_ion"} /* 4 */,
                                        _nrn_mechanism_field<int>{"_cvode_ieq", "cvodeieq"} /* 5 */);
   hoc_register_prop_size(_mechtype, 16, 6);
-  hoc_register_dparam_semantics(_mechtype, 0, "cl_ion");
-  hoc_register_dparam_semantics(_mechtype, 1, "cl_ion");
-  hoc_register_dparam_semantics(_mechtype, 2, "cl_ion");
-  hoc_register_dparam_semantics(_mechtype, 3, "cl_ion");
-  hoc_register_dparam_semantics(_mechtype, 4, "cl_ion");
+  hoc_register_dparam_semantics(_mechtype, 0, "cal_ion");
+  hoc_register_dparam_semantics(_mechtype, 1, "cal_ion");
+  hoc_register_dparam_semantics(_mechtype, 2, "cal_ion");
+  hoc_register_dparam_semantics(_mechtype, 3, "cal_ion");
+  hoc_register_dparam_semantics(_mechtype, 4, "cal_ion");
   hoc_register_dparam_semantics(_mechtype, 5, "cvodeieq");
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
  	hoc_register_tolerance(_mechtype, _hoc_state_tol, &_atollist);
@@ -452,9 +452,9 @@ static void _ode_spec(_nrn_model_sorted_token const& _sorted_token, NrnThread* _
     _ppvar = _ml_arg->_pdata[_iml];
     _nd = _ml_arg->_nodelist[_iml];
     v = NODEV(_nd);
-  ecl = _ion_ecl;
-  cli = _ion_cli;
-  clo = _ion_clo;
+  ecal = _ion_ecal;
+  cali = _ion_cali;
+  calo = _ion_calo;
      _ode_spec1 (_threadargs_);
   }}
  
@@ -488,9 +488,9 @@ static void _ode_matsol(_nrn_model_sorted_token const& _sorted_token, NrnThread*
     _ppvar = _ml_arg->_pdata[_iml];
     _nd = _ml_arg->_nodelist[_iml];
     v = NODEV(_nd);
-  ecl = _ion_ecl;
-  cli = _ion_cli;
-  clo = _ion_clo;
+  ecal = _ion_ecal;
+  cali = _ion_cali;
+  calo = _ion_calo;
  _ode_matsol_instance1(_threadargs_);
  }}
 
@@ -522,9 +522,9 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
  _ppvar = _ml_arg->_pdata[_iml];
    _v = _vec_v[_ni[_iml]];
  v = _v;
-  ecl = _ion_ecl;
-  cli = _ion_cli;
-  clo = _ion_clo;
+  ecal = _ion_ecal;
+  cali = _ion_cali;
+  calo = _ion_calo;
  initmodel(_threadargs_);
  }
 }
@@ -532,9 +532,9 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 static double _nrn_current(_internalthreadargsprotocomma_ double _v) {
 double _current=0.; v=_v;
 { {
-   icl = pbar * m * m * ( a * h + ( 1.0 - a ) ) * ghk ( _threadargscomma_ v , cli , clo ) ;
+   ical = pbar * m * m * ( a * h + ( 1.0 - a ) ) * ghk ( _threadargscomma_ v , cali , calo ) ;
    }
- _current += icl;
+ _current += ical;
 
 } return _current;
 }
@@ -555,17 +555,17 @@ if (gind != 0 && _thread != nullptr) { _globals = _thread[_gth].get<double*>(); 
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _ppvar = _ml_arg->_pdata[_iml];
    _v = _vec_v[_ni[_iml]];
-  ecl = _ion_ecl;
-  cli = _ion_cli;
-  clo = _ion_clo;
+  ecal = _ion_ecal;
+  cali = _ion_cali;
+  calo = _ion_calo;
  auto const _g_local = _nrn_current(_threadargscomma_ _v + .001);
- 	{ double _dicl;
-  _dicl = icl;
+ 	{ double _dical;
+  _dical = ical;
  _rhs = _nrn_current(_threadargscomma_ _v);
-  _ion_dicldv += (_dicl - icl)/.001 ;
+  _ion_dicaldv += (_dical - ical)/.001 ;
  	}
  _g = (_g_local - _rhs)/.001;
-  _ion_icl += icl ;
+  _ion_ical += ical ;
 	 _vec_rhs[_ni[_iml]] -= _rhs;
  
 }
@@ -608,9 +608,9 @@ for (size_t _iml = 0; _iml < _cntml; ++_iml) {
    _v = _vec_v[_ni[_iml]];
  v=_v;
 {
-  ecl = _ion_ecl;
-  cli = _ion_cli;
-  clo = _ion_clo;
+  ecal = _ion_ecal;
+  cali = _ion_cali;
+  calo = _ion_calo;
  {   states(_threadargs_);
   } }}
 
@@ -634,8 +634,8 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "\n"
   "NEURON {\n"
   "    SUFFIX cal12\n"
-  "    USEION cl READ ecl, cli, clo WRITE icl VALENCE 2\n"
-  "    RANGE pbar, icl, a\n"
+  "    USEION cal READ ecal, cali, calo WRITE ical VALENCE 2\n"
+  "    RANGE pbar, ical, a\n"
   "}\n"
   "\n"
   "UNITS {\n"
@@ -655,10 +655,10 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "\n"
   "ASSIGNED {\n"
   "    v (mV)\n"
-  "    ecl (mV)\n"
-  "    icl (mA/cm2)\n"
-  "    cli (mM)\n"
-  "    clo (mM)\n"
+  "    ecal (mV)\n"
+  "    ical (mA/cm2)\n"
+  "    cali (mM)\n"
+  "    calo (mM)\n"
   "    minf\n"
   "    mtau (ms)\n"
   "    hinf\n"
@@ -673,7 +673,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "\n"
   "BREAKPOINT {\n"
   "    SOLVE states METHOD cnexp\n"
-  "    icl = pbar * m * m * (a * h + (1.0 - a)) * ghk(v, cli, clo)\n"
+  "    ical = pbar * m * m * (a * h + (1.0 - a)) * ghk(v, cali, calo)\n"
   "}\n"
   "\n"
   "INITIAL {\n"

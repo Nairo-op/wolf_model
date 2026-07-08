@@ -52,7 +52,7 @@ DERIVATIVE states {
 PROCEDURE rates(v (mV)) {
     LOCAL v_idx, fraction
     
-    minf = 1 / (1 + exp((v - (-82.0)) / 13.0))
+    minf = 1 / (1 + exp((v + 82.0) / 13.0))
 
     : --- HARDCODED LINEAR INTERPOLATION FOR KIR (mtau) ---
     : Range bounds: -100.0 mV to 0.0 mV, Step size: 10.0 mV
@@ -70,34 +70,34 @@ PROCEDURE rates(v (mV)) {
         
         : Perform linear interpolation based on index
         if (v_idx == 0) { 
-            mtau = 14.93 + fraction * (16.0 - 14.93)
+            mtau = 7.465 + fraction * (8.0 - 7.465)
         }
         else if (v_idx == 1) { 
-            mtau = 16.0 + fraction * (18.87 - 16.0)
+            mtau = 8.0 + fraction * (9.435 - 8.0)
         }
         else if (v_idx == 2) { 
-            mtau = 18.87 + fraction * (21.51 - 18.87)
+            mtau = 9.435 + fraction * (10.755 - 9.435)
         }
         else if (v_idx == 3) { 
-            mtau = 21.51 + fraction * (24.24 - 21.51)
+            mtau = 10.755 + fraction * (12.12 - 10.755)
         }
         else if (v_idx == 4) { 
-            mtau = 24.24 + fraction * (27.59 - 24.24)
+            mtau = 12.12 + fraction * (13.795 - 12.12)
         }
         else if (v_idx == 5) { 
-            mtau = 27.59 + fraction * (30.77 - 27.59)
+            mtau = 13.795 + fraction * (15.385 - 13.795)
         }
         else if (v_idx == 6) { 
-            mtau = 30.77 + fraction * (28.57 - 30.77)
+            mtau = 15.385 + fraction * (14.285 - 15.385)
         }
         else if (v_idx == 7) { 
-            mtau = 28.57 + fraction * (23.53 - 28.57)
+            mtau = 14.285 + fraction * (11.765 - 14.285)
         }
         else if (v_idx == 8) { 
-            mtau = 23.53 + fraction * (17.78 - 23.53)
+            mtau = 11.765 + fraction * (8.89 - 11.765)
         }
         else if (v_idx == 9) { 
-            mtau = 17.78 + fraction * (16.0 - 17.78)
+            mtau = 8.89 + fraction * (8.0 - 8.89)
         }
     }
 }

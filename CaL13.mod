@@ -2,8 +2,8 @@ TITLE CaL 1.3 L-type calcium channel (Moczydlowski and Latorre 1983)
 
 NEURON {
     SUFFIX cal13
-    USEION cl READ cli, clo, ecl WRITE icl VALENCE 2
-    RANGE pbar, icl
+    USEION cal READ cali, calo, ecal WRITE ical VALENCE 2
+    RANGE pbar, ical
 }
 
 UNITS {
@@ -22,10 +22,10 @@ PARAMETER {
 
 ASSIGNED {
     v (mV)
-    ecl (mV)
-    icl (mA/cm2)
-    cli (mM)
-    clo (mM)
+    ecal (mV)
+    ical (mA/cm2)
+    cali (mM)
+    calo (mM)
     minf
     mtau (ms)
     hinf
@@ -40,7 +40,7 @@ STATE {
 
 BREAKPOINT {
     SOLVE states METHOD cnexp
-    icl = pbar * m * m * h * ghk(v, cli, clo)
+    ical = pbar * m * m * h * ghk(v, cali, calo)
 }
 
 INITIAL {

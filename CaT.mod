@@ -2,7 +2,7 @@ TITLE
 
 NEURON {
     SUFFIX cat
-    USEION cl READ ecl, cli, clo WRITE icl
+    USEION cal READ ecal, cali, calo WRITE ical
     RANGE pbar, icl, a
 }
 
@@ -23,10 +23,10 @@ PARAMETER {
 
 ASSIGNED {
     v (mV)
-    ecl (mV)
-    icl (mA/cm2)
-    cli (mM)
-    clo (mM)
+    ecal (mV)
+    ical (mA/cm2)
+    cali (mM)
+    calo (mM)
     minf
     mtau (ms)
     hinf
@@ -41,7 +41,7 @@ STATE {
 
 BREAKPOINT {
     SOLVE states METHOD cnexp
-    icl = pbar * m * m * m * h * ghk(v, cli, clo)
+    ical = pbar * m * m * m * h * ghk(v, cali, calo)
 }
 
 INITIAL {

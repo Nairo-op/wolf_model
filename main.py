@@ -202,10 +202,11 @@ t_vec = h.Vector().record(h._ref_t)
 
 h.cai0_ca_ion = 0.001
 h.cao0_ca_ion = 5.0
-h.cli0_cl_ion = 0.001
-h.clo0_cl_ion = 5.0
+h.cali0_cal_ion = 0.001
+h.calo0_cal_ion = 5.0
 
 # State Initialization 
+
 h.finitialize(-87.75)   
 
 h.tstop = 900

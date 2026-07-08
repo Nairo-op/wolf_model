@@ -303,7 +303,7 @@ static int _ode_spec1(_internalthreadargsproto_);
  
 static int  rates ( _internalthreadargsprotocomma_ double _lv ) {
    double _lv_idx , _lfraction ;
- minf = 1.0 / ( 1.0 + exp ( ( _lv - ( - 82.0 ) ) / 13.0 ) ) ;
+ minf = 1.0 / ( 1.0 + exp ( ( _lv + 82.0 ) / 13.0 ) ) ;
    if ( _lv <= - 100.0 ) {
      mtau = 7.465 ;
      }
@@ -314,34 +314,34 @@ static int  rates ( _internalthreadargsprotocomma_ double _lv ) {
      _lv_idx = floor ( ( _lv - ( - 100.0 ) ) / 10.0 ) ;
      _lfraction = ( ( _lv - ( - 100.0 ) ) / 10.0 ) - _lv_idx ;
      if ( _lv_idx  == 0.0 ) {
-       mtau = 14.93 + _lfraction * ( 16.0 - 14.93 ) ;
+       mtau = 7.465 + _lfraction * ( 8.0 - 7.465 ) ;
        }
      else if ( _lv_idx  == 1.0 ) {
-       mtau = 16.0 + _lfraction * ( 18.87 - 16.0 ) ;
+       mtau = 8.0 + _lfraction * ( 9.435 - 8.0 ) ;
        }
      else if ( _lv_idx  == 2.0 ) {
-       mtau = 18.87 + _lfraction * ( 21.51 - 18.87 ) ;
+       mtau = 9.435 + _lfraction * ( 10.755 - 9.435 ) ;
        }
      else if ( _lv_idx  == 3.0 ) {
-       mtau = 21.51 + _lfraction * ( 24.24 - 21.51 ) ;
+       mtau = 10.755 + _lfraction * ( 12.12 - 10.755 ) ;
        }
      else if ( _lv_idx  == 4.0 ) {
-       mtau = 24.24 + _lfraction * ( 27.59 - 24.24 ) ;
+       mtau = 12.12 + _lfraction * ( 13.795 - 12.12 ) ;
        }
      else if ( _lv_idx  == 5.0 ) {
-       mtau = 27.59 + _lfraction * ( 30.77 - 27.59 ) ;
+       mtau = 13.795 + _lfraction * ( 15.385 - 13.795 ) ;
        }
      else if ( _lv_idx  == 6.0 ) {
-       mtau = 30.77 + _lfraction * ( 28.57 - 30.77 ) ;
+       mtau = 15.385 + _lfraction * ( 14.285 - 15.385 ) ;
        }
      else if ( _lv_idx  == 7.0 ) {
-       mtau = 28.57 + _lfraction * ( 23.53 - 28.57 ) ;
+       mtau = 14.285 + _lfraction * ( 11.765 - 14.285 ) ;
        }
      else if ( _lv_idx  == 8.0 ) {
-       mtau = 23.53 + _lfraction * ( 17.78 - 23.53 ) ;
+       mtau = 11.765 + _lfraction * ( 8.89 - 11.765 ) ;
        }
      else if ( _lv_idx  == 9.0 ) {
-       mtau = 17.78 + _lfraction * ( 16.0 - 17.78 ) ;
+       mtau = 8.89 + _lfraction * ( 8.0 - 8.89 ) ;
        }
      }
     return 0; }
@@ -617,7 +617,7 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "PROCEDURE rates(v (mV)) {\n"
   "    LOCAL v_idx, fraction\n"
   "    \n"
-  "    minf = 1 / (1 + exp((v - (-82.0)) / 13.0))\n"
+  "    minf = 1 / (1 + exp((v + 82.0) / 13.0))\n"
   "\n"
   "    : --- HARDCODED LINEAR INTERPOLATION FOR KIR (mtau) ---\n"
   "    : Range bounds: -100.0 mV to 0.0 mV, Step size: 10.0 mV\n"
@@ -635,34 +635,34 @@ static void register_nmodl_text_and_filename(int mech_type) {
   "        \n"
   "        : Perform linear interpolation based on index\n"
   "        if (v_idx == 0) { \n"
-  "            mtau = 14.93 + fraction * (16.0 - 14.93)\n"
+  "            mtau = 7.465 + fraction * (8.0 - 7.465)\n"
   "        }\n"
   "        else if (v_idx == 1) { \n"
-  "            mtau = 16.0 + fraction * (18.87 - 16.0)\n"
+  "            mtau = 8.0 + fraction * (9.435 - 8.0)\n"
   "        }\n"
   "        else if (v_idx == 2) { \n"
-  "            mtau = 18.87 + fraction * (21.51 - 18.87)\n"
+  "            mtau = 9.435 + fraction * (10.755 - 9.435)\n"
   "        }\n"
   "        else if (v_idx == 3) { \n"
-  "            mtau = 21.51 + fraction * (24.24 - 21.51)\n"
+  "            mtau = 10.755 + fraction * (12.12 - 10.755)\n"
   "        }\n"
   "        else if (v_idx == 4) { \n"
-  "            mtau = 24.24 + fraction * (27.59 - 24.24)\n"
+  "            mtau = 12.12 + fraction * (13.795 - 12.12)\n"
   "        }\n"
   "        else if (v_idx == 5) { \n"
-  "            mtau = 27.59 + fraction * (30.77 - 27.59)\n"
+  "            mtau = 13.795 + fraction * (15.385 - 13.795)\n"
   "        }\n"
   "        else if (v_idx == 6) { \n"
-  "            mtau = 30.77 + fraction * (28.57 - 30.77)\n"
+  "            mtau = 15.385 + fraction * (14.285 - 15.385)\n"
   "        }\n"
   "        else if (v_idx == 7) { \n"
-  "            mtau = 28.57 + fraction * (23.53 - 28.57)\n"
+  "            mtau = 14.285 + fraction * (11.765 - 14.285)\n"
   "        }\n"
   "        else if (v_idx == 8) { \n"
-  "            mtau = 23.53 + fraction * (17.78 - 23.53)\n"
+  "            mtau = 11.765 + fraction * (8.89 - 11.765)\n"
   "        }\n"
   "        else if (v_idx == 9) { \n"
-  "            mtau = 17.78 + fraction * (16.0 - 17.78)\n"
+  "            mtau = 8.89 + fraction * (8.0 - 8.89)\n"
   "        }\n"
   "    }\n"
   "}\n"
