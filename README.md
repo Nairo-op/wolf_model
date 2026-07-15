@@ -26,19 +26,19 @@ Medium Spiny Neurons (MSNs), which make up over 95% of the striatal population, 
 ## 📂 Repository Structure
 
 ### 💻 Simulation Workflows
-* **[main.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/main.py)** — Somatic current clamp simulation using NEURON's interactive Graphical User Interface (GUI) layout configured via `main.ses`.
-* **[IClamp.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/IClamp.py)** — Executes somatic current clamp steps to measure responses to depolarizing step currents (+0.271 nA, +0.248 nA) and hyperpolarizing step currents (-0.227 nA).
-* **[chan_currents.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/chan_currents.py)** — Investigates the impact of slow A-type potassium current ($I_{\text{KAs}}$) inactivation kinetics on the characteristic late-firing (delayed excitation) behavior of MSNs.
-* **[current_volt_freq.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/current_volt_freq.py)** — Sweeps current steps to map out the steady-state Current-Voltage ($I\text{-}V$) relationship and the Frequency-Current ($F\text{-}I$) excitability curve.
-* **[syn.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/syn.py)** — Replicates the stochastic synaptic input protocols from Figure 3 of the paper, demonstrating up-state transitions driven by Poisson afferent inputs, and exploring the impact of NMDA block and shunting GABAergic inhibition.
+* **[main.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/main.py)** — Somatic current clamp simulation using NEURON's interactive Graphical User Interface (GUI) layout configured via `main.ses`.
+* **[IClamp.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/IClamp.py)** — Executes somatic current clamp steps to measure responses to depolarizing step currents (+0.271 nA, +0.248 nA) and hyperpolarizing step currents (-0.227 nA).
+* **[chan_currents.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/chan_currents.py)** — Investigates the impact of slow A-type potassium current ($I_{\text{KAs}}$) inactivation kinetics on the characteristic late-firing (delayed excitation) behavior of MSNs.
+* **[current_volt_freq.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/current_volt_freq.py)** — Sweeps current steps to map out the steady-state Current-Voltage ($I\text{-}V$) relationship and the Frequency-Current ($F\text{-}I$) excitability curve.
+* **[syn.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/syn.py)** — Replicates the stochastic synaptic input protocols from Figure 3 of the paper, demonstrating up-state transitions driven by Poisson afferent inputs, and exploring the impact of NMDA block and shunting GABAergic inhibition.
 
 ### ⚙️ Mechanisms & Helper Modules (`imp_files/`)
 * **`*.mod`** — NMODL files containing the biophysical implementations of all channels, calcium dynamics, and synaptic receptors.
-* **[msn_class.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/imp_files/msn_class.py)** — Python class template defining the morphology, compartment connectivity, channel insertion, and synaptic placements of the MSN.
-* **[utilities.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/imp_files/utilities.py)** — Parallel sweep manager and auto-loader helper scripts.
+* **[msn_class.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/imp_files/msn_class.py)** — Python class template defining the morphology, compartment connectivity, channel insertion, and synaptic placements of the MSN.
+* **[utilities.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/imp_files/utilities.py)** — Parallel sweep manager and auto-loader helper scripts.
 
 ### 📊 Documentation
-* **[all_parameters.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/all_parameters.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
+* **[all_parameters.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/all_parameters.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
 
 ---
 
@@ -110,4 +110,4 @@ Under low-frequency synaptic inputs, the membrane potential fluctuates within th
 ---
 
 ## 📝 References
-* **Wolf JA, Moyer JT, Lazarewicz MT, Contreras D, Benoit-Marand M, O'Donnell P, Finkel LH (2005).** *Computational Model of the Striatal Medium Spiny Neuron: Biophysical Properties and State Transitions.* Journal of Neuroscience 25(39):9080-9095. [Link to paper](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/paper/NMDAAMPA%20Ratio%20Impacts%20State%20Transitions%20and%20Entrainment.pdf).
+* **Wolf JA, Moyer JT, Lazarewicz MT, Contreras D, Benoit-Marand M, O'Donnell P, Finkel LH (2005).** *Computational Model of the Striatal Medium Spiny Neuron: Biophysical Properties and State Transitions.* Journal of Neuroscience 25(39):9080-9095. [Link to paper](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/paper/NMDAAMPA%20Ratio%20Impacts%20State%20Transitions%20and%20Entrainment.pdf).
