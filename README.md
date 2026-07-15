@@ -38,7 +38,7 @@ Medium Spiny Neurons (MSNs), which make up over 95% of the striatal population, 
 * **[utilities.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/imp_files/utilities.py)** — Parallel sweep manager and auto-loader helper scripts.
 
 ###  Documentation
-* **[all_data.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/all_parameters.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
+* **[all_data.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/all_data.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
 
 ---
 
