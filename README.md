@@ -6,7 +6,7 @@ Medium Spiny Neurons (MSNs), which make up over 95% of the striatal population, 
 
 ---
 
-## 🔬 Scientific & Biophysical Features
+##  Scientific & Biophysical Features
 
 * **Multicompartmental Morphology:** Standardized reconstruction consisting of a soma and 28 dendritic branches (4 primary, 8 secondary, 16 tertiary branches).
 * **Dendritic Spine Compensation:** Incorporates dendritic spines without explicit compartmentalization by scaling the passive membrane capacitance ($C_m$) and leak conductance ($g_{\text{pas}}$) by a localized spine factor ($F_{\text{spine}}$). Dendritic diameters ($d$) and lengths ($L$) are adjusted according to cable theory ($d_{\text{adj}} = d \cdot F_{\text{spine}}^{1.5}$, $L_{\text{adj}} = L \cdot F_{\text{spine}}^{0.5}$) to preserve the correct axial resistance and electrotonic properties of the branches.
@@ -23,26 +23,26 @@ Medium Spiny Neurons (MSNs), which make up over 95% of the striatal population, 
 
 ---
 
-## 📂 Repository Structure
+##  Repository Structure
 
-### 💻 Simulation Workflows
+###  Simulation Workflows
 * **[main.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/main.py)** — Somatic current clamp simulation using NEURON's interactive Graphical User Interface (GUI) layout configured via `main.ses`.
 * **[IClamp.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/IClamp.py)** — Executes somatic current clamp steps to measure responses to depolarizing step currents (+0.271 nA, +0.248 nA) and hyperpolarizing step currents (-0.227 nA).
 * **[chan_currents.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/chan_currents.py)** — Investigates the impact of slow A-type potassium current ($I_{\text{KAs}}$) inactivation kinetics on the characteristic late-firing (delayed excitation) behavior of MSNs.
 * **[current_volt_freq.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/current_volt_freq.py)** — Sweeps current steps to map out the steady-state Current-Voltage ($I\text{-}V$) relationship and the Frequency-Current ($F\text{-}I$) excitability curve.
 * **[syn.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/syn.py)** — Replicates the stochastic synaptic input protocols from Figure 3 of the paper, demonstrating up-state transitions driven by Poisson afferent inputs, and exploring the impact of NMDA block and shunting GABAergic inhibition.
 
-### ⚙️ Mechanisms & Helper Modules (`imp_files/`)
+###  Mechanisms & Helper Modules (`imp_files/`)
 * **`*.mod`** — NMODL files containing the biophysical implementations of all channels, calcium dynamics, and synaptic receptors.
 * **[msn_class.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/imp_files/msn_class.py)** — Python class template defining the morphology, compartment connectivity, channel insertion, and synaptic placements of the MSN.
 * **[utilities.py](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/imp_files/utilities.py)** — Parallel sweep manager and auto-loader helper scripts.
 
-### 📊 Documentation
-* **[all_parameters.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/all_parameters.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
+###  Documentation
+* **[all_data.md](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/all_parameters.md)** — A complete, mathematically rigorous reference document cataloging all gating variables, kinetics lookup tables, membrane properties, and channel densities across the compartmental tree.
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Requirements
 Ensure you have the NEURON simulator, NumPy, and Matplotlib installed in your environment:
@@ -96,7 +96,7 @@ The characterization sweeps run in headless mode and utilize parallel CPU execut
 
 ---
 
-## 📖 Key Physiological Findings & Replications
+##  Key Physiological Findings & Replications
 
 ### Excitability & Inward Rectification (Figure 1)
 MSNs rest at approximately $-88$ mV in their "down-state," stabilized by inwardly rectifying Kir channels. Injecting hyperpolarizing current (-0.227 nA) reveals this rectifying property—the membrane voltage does not drop linearly but deflects into a steady hyperpolarized plateau. Under depolarizing current steps (+0.271 nA), the cell slowly depolarizes, showing a delay before firing its first action potential.
@@ -109,5 +109,5 @@ Under low-frequency synaptic inputs, the membrane potential fluctuates within th
 
 ---
 
-## 📝 References
+##  References
 * **Wolf JA, Moyer JT, Lazarewicz MT, Contreras D, Benoit-Marand M, O'Donnell P, Finkel LH (2005).** *Computational Model of the Striatal Medium Spiny Neuron: Biophysical Properties and State Transitions.* Journal of Neuroscience 25(39):9080-9095. [Link to paper](https://github.com/Nairo-op/MSN2005_wolf_et_al-replicated-/tree/main/paper/NMDAAMPA%20Ratio%20Impacts%20State%20Transitions%20and%20Entrainment.pdf).
